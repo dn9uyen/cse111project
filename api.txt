@@ -1,0 +1,119 @@
+*** General API for /(component)/info are all similar ***
+GET /cpu/info
+Purpose: Get cpu info using cpuid
+Input: {"cpuid": 0}
+Output: {"cpuid": 0, "price": 100, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": True, "hascooler": False, "brand": "Intel", "socket": "LGA1700", "ddrgen": {"DDR4", "DDR5"}}
+
+POST /cpu/info
+Purpose: Add new cpu info. Returns new cpuid
+Input: {"price": 100, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": True, "hascooler": False, "brand": "Intel", "socket": "LGA1700", "ddrgen": {"DDR4", "DDR5"}}
+Output: {"cpuid": 0"}
+
+PUT /cpu/info
+Purpose: Update cpu info. Can do partial update. Returns updated info
+Input: {"cpuid": 0, "price": 105, "ddrgen": {"DDR4"}}
+Output: {"cpuid": 0, "price": 105, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": True, "hascooler": False, "brand": "Intel", "socket": "LGA1700", "ddrgen": {"DDR4"}}
+
+DELETE /cpu/info
+Purpose: Delete cpu info using cpuid
+Input: {"cpuid": 0}
+Output: {"cpuid": 0, "price": 100, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": True, "hascooler": False, "brand": "Intel", "socket": "LGA1700", "ddrgen": {"DDR4", "DDR5"}}
+
+GET /ram/info
+Input: {"ramid": 0}
+Output: {"ramid": 0, "price": 100, "model": "Corsair Vengence", "size": 16, "speed": 3600, "latency": "CL16", "brand": "Corsair", "ddrgen": "ddr4"}
+
+POST /ram/info
+
+PUT /ram/info
+
+DELETE /ram/info
+
+GET /motherboard/info
+Input: {"motherboardid": 0}
+Output: {"motherboardid": 0, "price": 100, "model": "Asus B470", "ramspeed": 4000, "usbcount": 5, "formfactor": "ATX", "chipset": "B470", "brand": "Asus", "pciegen": "PCIe 4.0", "ddrgen": "DDR4", "socket": "AM4", "storageinterface": {"SATA", "NVMe"}}
+
+POST /motherboard/info
+
+PUT /motherboard/info
+
+DELETE /motherboard/info
+
+GET /psu/info
+Input: {"psuid": 0}
+Output: {"psuid": 0, "price": 100, "model": "Corsair RM1000", "wattage": 1000, "brand": "Corsair", "efficiency": "80+ Gold"}
+
+POST /psu/info
+
+PUT /psu/info
+
+DELETE /psu/info
+
+GET /gpu/info
+Input: {"gpuid": 0}
+Output: {"gpuid": 0, "price": 100, "model": "Gigabyte 4090", "memory": 24, "speed": 3.4, "boostspeed": 3.8, "hdmicount": 4, "displayportcount": 1, "brand": "Gigabyte", "chipsetid": "GeForce RTX 4090", "pciegen": "PCIe 4.0"}
+
+POST /gpu/info
+
+PUT /gpu/info
+
+DELETE /gpu/info
+
+GET /storage/info
+Input: {"storageid": 0}
+Output: {"storageid": 0, "price": 100, "model": "Samsung 970 Evo", "capacity": 1000, "brand": "Samsung", "storageinterface": "NVMe"}
+
+POST /storage/info
+
+PUT /storage/info
+
+DELETE /storage/info
+
+GET /cooler/info
+Input: {"coolerid": 0}
+Output: {"coolerid": 0, "price": 100, "model": "Corsair H100i", "watercooled": False, "brand": "Corsair", "socket": {"LGA1700", "AM4", "LGA1200"}}
+
+POST /cooler/info
+
+PUT /cooler/info
+
+DELETE /cooler/info
+
+
+
+GET /build
+Purpose: Get list of user's builds. Returns name and buildid
+Input: {"usertoken": "1434654564"}
+Output: {0: "My new computer", 1: "My second computer"}
+
+GET /build/info
+Purpose: Get a specific user build. Component ids can be null, representing no component chosen.
+Input: {"usertoken": "1434654564", "buildid": 0}
+Output: {"buildid": 0, "name": "My new computer", "cpuid": 10, "ramid": null, "motherboardid": 1, "psuid": 1, "gpuid": 1, "storageid": 1}
+
+POST /build/info
+Purpose: Save a build in the database. Component ids can be null, representing no component chosen. Returns the build.
+Input: {"usertoken": "1434654564", "name": "My new computer"}
+Output: {"buildid": 0, "name": "My new computer", "cpuid": 10, "ramid": null, "motherboardid": 1, "psuid": 1, "gpuid": 1, "storageid": 1}
+
+PUT /build/info
+Purpose: Update a build. Can do partial update. Returns updated build
+Input: {"usertoken": "1434654564", "buildid": 0, "cpuid": 1}
+
+
+
+
+POST /login
+Purpose: Login as user. Returns usertoken for the session. Hash password if we have time. Use plaintext for now.
+Input: {"username": "johnsmith1", "password": "mypassword}
+Output: {"usertoken": "125739845"}
+
+POST /logout
+Purpose: Logout
+Input: {"usertoken": "198474532"}
+Output: Code 200 if successful
+
+POST /login/create
+Purpose: Create user
+Input: {"username": "johnsmith1", "password": "mypassword}
+Output: Code 200 if successful
