@@ -5,8 +5,8 @@ Input: Url parameter
 Output: {"cpuid": 0, "price": 100, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": true, "hascooler": false, "brand": "Intel", "socket": "LGA1700", "ddrgen": ["DDR4", "DDR5"]}
 
 POST /cpu/info
-Purpose: Add new cpu info. Returns new cpuid
-Input: {"price": 100, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": true, "hascooler": false, "brand": "Intel", "socket": "LGA1700", "ddrgen": ["DDR4", "DDR5"]}
+Purpose: Add new cpu info. Returns new cpuid. cpuid is optional arg.
+Input: {"cpuid": 0, "price": 100, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": true, "hascooler": false, "brand": "Intel", "socket": "LGA1700", "ddrgen": ["DDR4", "DDR5"]}
 Output: {"cpuid": 0"}
 
 PUT /cpu/info
@@ -14,9 +14,9 @@ Purpose: Update cpu info. Can do partial update. Returns updated info
 Input: {"cpuid": 0, "price": 105, "ddrgen": {"DDR4"}}
 Output: {"cpuid": 0, "price": 105, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": true, "hascooler": false, "brand": "Intel", "socket": "LGA1700", "ddrgen": ["DDR4"[}
 
-DELETE /cpu/info
+DELETE /cpu/info?cpuid=0
 Purpose: Delete cpu info using cpuid
-Input: {"cpuid": 0}
+Input: Url parameter
 Output: {"cpuid": 0, "price": 100, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": true, "hascooler": false, "brand": "Intel", "socket": "LGA1700", "ddrgen": ["DDR4", "DDR5"]}
 
 GET /ram/info
@@ -27,7 +27,7 @@ POST /ram/info
 
 PUT /ram/info
 
-DELETE /ram/info
+DELETE /ram/info?ramid=0
 
 GET /motherboard/info?motherboardid=0
 Input: Url parameter
@@ -37,7 +37,7 @@ POST /motherboard/info
 
 PUT /motherboard/info
 
-DELETE /motherboard/info
+DELETE /motherboard/info?motherboardid=0
 
 GET /psu/info?psuid=0
 Input: Url parameter
@@ -47,7 +47,7 @@ POST /psu/info
 
 PUT /psu/info
 
-DELETE /psu/info
+DELETE /psu/info?psuid=0
 
 GET /gpu/info?gpuid=0
 Input: Url parameter
@@ -57,7 +57,7 @@ POST /gpu/info
 
 PUT /gpu/info
 
-DELETE /gpu/info
+DELETE /gpu/info?gpuid=0
 
 GET /storage/info/storageid=0
 Input: Url parameter
@@ -67,7 +67,7 @@ POST /storage/info
 
 PUT /storage/info
 
-DELETE /storage/info
+DELETE /storage/info?storageid=0
 
 GET /cooler/info?coolerid=0
 Input: Url parameter
@@ -77,7 +77,7 @@ POST /cooler/info
 
 PUT /cooler/info
 
-DELETE /cooler/info
+DELETE /cooler/info?coolerid=0
 
 
 

@@ -1,5 +1,5 @@
 CREATE TABLE IF NOT EXISTS cpu (
-    cpuid INT PRIMARY KEY,
+    cpuid INTEGER PRIMARY KEY,
     price DECIMAL(10, 2) NOT NULL,
     model VARCHAR(128) NOT NULL,
     speed DECIMAL(3, 2) NOT NULL, -- GHz
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS cpu (
 );
 
 CREATE TABLE IF NOT EXISTS ram (
-    ramid INT PRIMARY KEY,
+    ramid INTEGER PRIMARY KEY,
     price DECIMAL(10, 2) NOT NULL,
     model VARCHAR(128) NOT NULL,
     size INT NOT NULL, -- GB
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS ram (
 );
 
 CREATE TABLE IF NOT EXISTS motherboard (
-    motherboardid INT PRIMARY KEY,
+    motherboardid INTEGER PRIMARY KEY,
     price DECIMAL(10, 2) NOT NULL,
     model VARCHAR(128) NOT NULL,
     ramspeed INT NOT NULL,            -- Max supported speed, MHz
@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS motherboard (
 );
 
 CREATE TABLE IF NOT EXISTS psu (
-    psuid INT PRIMARY KEY,
+    psuid INTEGER PRIMARY KEY,
     price DECIMAL(10, 2) NOT NULL,
     model VARCHAR(128) NOT NULL,
     wattage INT NOT NULL, -- watts (power)
@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS psu (
 );
 
 CREATE TABLE IF NOT EXISTS gpu (
-    gpuid INT PRIMARY KEY,
+    gpuid INTEGER PRIMARY KEY,
     price DECIMAL(10, 2) NOT NULL,
     model VARCHAR(128) NOT NULL,
     memory INT NOT NULL, -- GB
@@ -76,7 +76,7 @@ CREATE TABLE IF NOT EXISTS gpu (
 );
 
 CREATE TABLE IF NOT EXISTS storage (
-    storageid INT PRIMARY KEY,
+    storageid INTEGER PRIMARY KEY,
     price DECIMAL(10, 2) NOT NULL,
     model VARCHAR(128) NOT NULL,
     capacity INT NOT NULL, -- GB
@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS storage (
 );
 
 CREATE TABLE IF NOT EXISTS cooler (
-    coolerid INT PRIMARY KEY,
+    coolerid INTEGER PRIMARY KEY,
     price DECIMAL(10, 2) NOT NULL,
     model VARCHAR(128) NOT NULL,
     watercooled BOOLEAN NOT NULL,
@@ -98,37 +98,37 @@ CREATE TABLE IF NOT EXISTS cooler (
 
 
 CREATE TABLE IF NOT EXISTS brand (
-    brandid INT PRIMARY KEY,
+    brandid INTEGER PRIMARY KEY,
     name VARCHAR(16) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS storage_interface (
-    storageinterfaceid INT PRIMARY KEY,
+    storageinterfaceid INTEGER PRIMARY KEY,
     name VARCHAR(16) NOT NULL  -- SATA, NVMe, etc.
 );
 
 CREATE TABLE IF NOT EXISTS socket (
-    socketid INT PRIMARY KEY,
+    socketid INTEGER PRIMARY KEY,
     name VARCHAR(16) NOT NULL -- AM4, AM5, LGA1700, etc
 );
 
 CREATE TABLE IF NOT EXISTS pciegen (
-    pciegenid INT PRIMARY KEY,
+    pciegenid INTEGER PRIMARY KEY,
     name VARCHAR(16) NOT NULL -- PCIe 3.0, PCIe 4.0, etc
 );
 
 CREATE TABLE IF NOT EXISTS ddrgen (
-    ddrgenid INT PRIMARY KEY,
+    ddrgenid INTEGER PRIMARY KEY,
     name VARCHAR(8) NOT NULL -- DDR4, DDR5
 );
 
 CREATE TABLE IF NOT EXISTS chipset (
-    chipsetid INT PRIMARY KEY,
+    chipsetid INTEGER PRIMARY KEY,
     name VARCHAR(16) NOT NULL -- AMD X670, INTEL Z690, etc
 );
 
 CREATE TABLE IF NOT EXISTS efficiency (
-    efficiencyid INT PRIMARY KEY,
+    efficiencyid INTEGER PRIMARY KEY,
     name VARCHAR(16) NOT NULL -- 80+ Bronze, 80+ Gold, etc
 );
 
@@ -136,8 +136,8 @@ CREATE TABLE IF NOT EXISTS efficiency (
 
 -- motherboards can support multiple interfaces
 CREATE TABLE IF NOT EXISTS motherboard_storage_interface (
-    motherboardid INT NOT NULL,
-    storageinterfaceid INT NOT NULL,
+    motherboardid INTEGER NOT NULL,
+    storageinterfaceid INTEGER NOT NULL,
     PRIMARY KEY (motherboardid, storageinterfaceid),
     FOREIGN KEY (motherboardid) REFERENCES motherboard(motherboardid),
     FOREIGN KEY (storageinterfaceid) REFERENCES storage_interface(storageinterfaceid)
@@ -145,8 +145,8 @@ CREATE TABLE IF NOT EXISTS motherboard_storage_interface (
 
 -- cpu can support multiple ddr generations
 CREATE TABLE IF NOT EXISTS cpu_ddrgen ( 
-    cpuid INT NOT NULL,
-    ddrgenid INT NOT NULL,
+    cpuid INTEGER NOT NULL,
+    ddrgenid INTEGER NOT NULL,
     PRIMARY KEY (cpuid, ddrgenid),
     FOREIGN KEY (cpuid) REFERENCES cpu(cpuid),
     FOREIGN KEY (ddrgenid) REFERENCES ddrgen(ddrgenid)
@@ -154,8 +154,8 @@ CREATE TABLE IF NOT EXISTS cpu_ddrgen (
 
 -- cooler can support multiple sockets
 CREATE TABLE IF NOT EXISTS cooler_socket ( 
-    coolerid INT NOT NULL,
-    socketid INT NOT NULL,
+    coolerid INTEGER NOT NULL,
+    socketid INTEGER NOT NULL,
     PRIMARY KEY (coolerid, socketid),
     FOREIGN KEY (coolerid) REFERENCES cooler(coolerid),
     FOREIGN KEY (socketid) REFERENCES socket(socketid)
@@ -164,14 +164,14 @@ CREATE TABLE IF NOT EXISTS cooler_socket (
 
 
 CREATE TABLE IF NOT EXISTS user (
-    userid INT PRIMARY KEY,
+    userid INTEGER PRIMARY KEY,
     username VARCHAR(32) NOT NULL,
     password VARCHAR(60) NOT NULL -- hashed if we have time to implement
 );
 
 CREATE TABLE IF NOT EXISTS build (
-    buildid INT,
-    userid INT,
+    buildid INTEGER,
+    userid INTEGER,
     cpuid INT,
     ramid INT,
     motherboardid INT,

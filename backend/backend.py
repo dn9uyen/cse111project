@@ -44,7 +44,7 @@ def getCpuInfo():
     with engine.connect() as conn:
         query = """
             SELECT cpu.*, brand.name AS brand, socket.name AS socket,
-                GROUP_CONCAT(ddrgen.name, ', ') AS ddrgen
+                GROUP_CONCAT(ddrgen.name, ',') AS ddrgen
             FROM cpu
             JOIN brand ON cpu.brandid = brand.brandid
             JOIN socket on cpu.socketid = socket.socketid
@@ -63,7 +63,82 @@ def getCpuInfo():
             jsonData[col] = val.split(",")
         else:
             jsonData[col] = val
+    print(jsonData)
     return jsonify(jsonData)
+
+@app.route("/cpu/info", methods=["POST"])
+def addCpuInfo():
+    body = flask.request.get_json()
+    rows = {
+        "price": body["price"],
+        "model": body["model"],
+        "speed": body["speed"],
+        "boostspeed": body["boostspeed"],
+        "cores": body["cores"],
+        "threads": body["threads"],
+        "tdp": body["tdp"],
+        "wattage": body["wattage"],
+        "hasgraphics": body["hasgraphics"],
+        "hascooler": body["hascooler"],
+    }
+    ddrgens = body["ddrgen"]
+    cpuid = body.get("cpuid", None)
+    if cpuid != None:
+        rows["cpuid"] = cpuid
+    
+    with engine.connect() as conn:
+        query = f"SELECT brandid FROM brand WHERE name LIKE '{body["brand"]}'"
+        rows["brandid"] = conn.exec_driver_sql(query).fetchone()[0]
+        query = f"SELECT socketid FROM socket WHERE name LIKE '{body["socket"]}'"
+        rows["socketid"] = conn.exec_driver_sql(query).fetchone()[0]
+
+        for key, value in rows.items():
+            if type(value) == str:
+                rows[key] = f"'{value}'"
+        query = f"""
+            INSERT OR IGNORE INTO cpu ({", ".join(rows.keys())}) VALUES ({", ".join(map(str,rows.values()))})
+        """
+        conn.exec_driver_sql(query)
+
+        if cpuid == None:
+            query = "SELECT last_insert_rowid() AS LastInsertedID;"
+            cpuid = conn.exec_driver_sql(query).fetchone()[0]
+
+        for ddrgen in ddrgens:
+            query = f"SELECT ddrgenid FROM ddrgen WHERE name LIKE '{ddrgen}'"
+            ddrgenid = conn.exec_driver_sql(query).fetchone()[0]
+            query = f"INSERT INTO cpu_ddrgen (cpuid, ddrgenid) VALUES ({cpuid}, {ddrgenid})"
+            conn.exec_driver_sql(query)
+        conn.commit()
+
+    return {"cpuid": cpuid}
+
+@app.route("/cpu/info", methods=["PUT"])
+def updateCpuInfo():
+    body = flask.request.get_json()
+    cpuid = body["cpuid"]
+    with app.test_client() as client:
+        response = client.delete(f"http://localhost:5000/cpu/info?cpuid={cpuid}").json
+        for col, val in body.items():
+            response[col] = val
+        response["cpuid"] = cpuid
+        client.post(f"http://localhost:5000/cpu/info", json=response)
+
+    return response
+
+@app.route("/cpu/info", methods=["DELETE"])
+def deleteCpuInfo():
+    cpuid = flask.request.args.get("cpuid")
+    with app.test_client() as client:
+        response = client.get(f"http://localhost:5000/cpu/info?cpuid={cpuid}")
+    with engine.connect() as conn:
+        query = f"DELETE FROM cpu WHERE cpuid = {cpuid}"
+        conn.exec_driver_sql(query)
+        query = f"DELETE FROM cpu_ddrgen WHERE cpuid = {cpuid}"
+        conn.exec_driver_sql(query)
+        conn.commit()
+    return response.json
+
 
 @app.route("/ram/info", methods=["GET"])
 def getRamInfo():
@@ -90,6 +165,68 @@ def getRamInfo():
     for col, val in data.items():
         jsonData[col] = val
     return jsonify(jsonData)
+
+@app.route("/ram/info", methods=["POST"])
+def addRamInfo():
+    body = flask.request.get_json()
+    rows = {
+        "price": body["price"],
+        "model": body["model"],
+        "size": body["size"],
+        "speed": body["speed"],
+        "latency": body["latency"]
+    }
+    ramid = body.get("ramid", None)
+    if ramid != None:
+        rows["ramid"] = ramid
+    
+    with engine.connect() as conn:
+        query = f"SELECT brandid FROM brand WHERE name LIKE '{body["brand"]}'"
+        rows["brandid"] = conn.exec_driver_sql(query).fetchone()[0]
+        query = f"SELECT ddrgenid FROM ddrgen WHERE name LIKE '{body["ddrgen"]}'"
+        rows["ddrgenid"] = conn.exec_driver_sql(query).fetchone()[0]
+
+        for key, value in rows.items():
+            if type(value) == str:
+                rows[key] = f"'{value}'"
+        query = f"""
+            INSERT OR IGNORE INTO ram ({", ".join(rows.keys())}) VALUES ({", ".join(map(str,rows.values()))})
+        """
+        conn.exec_driver_sql(query)
+
+        if ramid == None:
+            query = "SELECT last_insert_rowid() AS LastInsertedID;"
+            ramid = conn.exec_driver_sql(query).fetchone()[0]
+
+        conn.commit()
+
+    return {"ramid": ramid}
+
+@app.route("/ram/info", methods=["PUT"])
+def updateRamInfo():
+    body = flask.request.get_json()
+    ramid = body["ramid"]
+    with app.test_client() as client:
+        response = client.delete(f"http://localhost:5000/ram/info?ramid={ramid}").json
+        for col, val in body.items():
+            response[col] = val
+        response["ramid"] = ramid
+        client.post(f"http://localhost:5000/ram/info", json=response)
+
+    return response
+
+@app.route("/ram/info", methods=["DELETE"])
+def deleteRamInfo():
+    ramid = flask.request.args.get("ramid")
+    with app.test_client() as client:
+        response = client.get(f"http://localhost:5000/ram/info?ramid={ramid}")
+    with engine.connect() as conn:
+        query = f"DELETE FROM ram WHERE ramid = {ramid}"
+        conn.exec_driver_sql(query)
+        conn.commit()
+    return response.json
+
+
 
 @app.route("/motherboard/info", methods=["GET"])
 def getMotherboardInfo():
