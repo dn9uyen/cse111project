@@ -51,7 +51,7 @@ DELETE /psu/info
 
 GET /gpu/info?gpuid=0
 Input: Url parameter
-Output: {"gpuid": 0, "price": 100, "model": "Gigabyte 4090", "memory": 24, "speed": 3.4, "boostspeed": 3.8, "hdmicount": 4, "displayportcount": 1, "brand": "Gigabyte", "chipsetid": "GeForce RTX 4090", "pciegen": "PCIe 4.0"}
+Output: {"gpuid": 0, "price": 100, "model": "Gigabyte 4090", "memory": 24, "speed": 3.4, "boostspeed": 3.8, "hdmicount": 4, "displayportcount": 1, "brand": "Gigabyte", "chipset": "GeForce RTX 4090", "pciegen": "PCIe 4.0"}
 
 POST /gpu/info
 
