@@ -138,7 +138,7 @@ CREATE TABLE IF NOT EXISTS efficiency (
 CREATE TABLE IF NOT EXISTS motherboard_storage_interface (
     motherboardid INT NOT NULL,
     storageinterfaceid INT NOT NULL,
-    PRIMARY KEY (motherboardid, interfaceid),
+    PRIMARY KEY (motherboardid, storageinterfaceid),
     FOREIGN KEY (motherboardid) REFERENCES motherboard(motherboardid),
     FOREIGN KEY (storageinterfaceid) REFERENCES storage_interface(storageinterfaceid)
 );
@@ -164,7 +164,7 @@ CREATE TABLE IF NOT EXISTS cooler_socket (
 
 
 CREATE TABLE IF NOT EXISTS user (
-    userid INT NOT NULL,
+    userid INT PRIMARY KEY,
     username VARCHAR(32) NOT NULL,
     password VARCHAR(60) NOT NULL -- hashed if we have time to implement
 );
@@ -178,4 +178,13 @@ CREATE TABLE IF NOT EXISTS build (
     psuid INT,
     gpuid INT,
     storageid INT,
+    PRIMARY KEY (buildid, userid)
+    FOREIGN KEY (userid) REFERENCES users(userid),
+    FOREIGN KEY (cpuid) REFERENCES cpu(cpuid),
+    FOREIGN KEY (ramid) REFERENCES ram(ramid),
+    FOREIGN KEY (motherboardid) REFERENCES motherboard(motherboardid),
+    FOREIGN KEY (psuid) REFERENCES psu(psuid),
+    FOREIGN KEY (gpuid) REFERENCES gpu(gpuid),
+    FOREIGN KEY (storageid) REFERENCES storage(storageid)
 );
+

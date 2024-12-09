@@ -1,7 +1,7 @@
 *** General API for /(component)/info are all similar ***
-GET /cpu/info
+GET /cpu/info?cpuid=0
 Purpose: Get cpu info using cpuid
-Input: {"cpuid": 0}
+Input: Url parameter
 Output: {"cpuid": 0, "price": 100, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": True, "hascooler": False, "brand": "Intel", "socket": "LGA1700", "ddrgen": {"DDR4", "DDR5"}}
 
 POST /cpu/info
@@ -29,8 +29,8 @@ PUT /ram/info
 
 DELETE /ram/info
 
-GET /motherboard/info
-Input: {"motherboardid": 0}
+GET /motherboard/info?motherboardid=0
+Input: Url parameter
 Output: {"motherboardid": 0, "price": 100, "model": "Asus B470", "ramspeed": 4000, "usbcount": 5, "formfactor": "ATX", "chipset": "B470", "brand": "Asus", "pciegen": "PCIe 4.0", "ddrgen": "DDR4", "socket": "AM4", "storageinterface": {"SATA", "NVMe"}}
 
 POST /motherboard/info
@@ -39,8 +39,8 @@ PUT /motherboard/info
 
 DELETE /motherboard/info
 
-GET /psu/info
-Input: {"psuid": 0}
+GET /psu/info?psuid=0
+Input: Url parameter
 Output: {"psuid": 0, "price": 100, "model": "Corsair RM1000", "wattage": 1000, "brand": "Corsair", "efficiency": "80+ Gold"}
 
 POST /psu/info
@@ -49,8 +49,8 @@ PUT /psu/info
 
 DELETE /psu/info
 
-GET /gpu/info
-Input: {"gpuid": 0}
+GET /gpu/info?gpuid=0
+Input: Url parameter
 Output: {"gpuid": 0, "price": 100, "model": "Gigabyte 4090", "memory": 24, "speed": 3.4, "boostspeed": 3.8, "hdmicount": 4, "displayportcount": 1, "brand": "Gigabyte", "chipsetid": "GeForce RTX 4090", "pciegen": "PCIe 4.0"}
 
 POST /gpu/info
@@ -59,8 +59,8 @@ PUT /gpu/info
 
 DELETE /gpu/info
 
-GET /storage/info
-Input: {"storageid": 0}
+GET /storage/info/storageid=0
+Input: Url parameter
 Output: {"storageid": 0, "price": 100, "model": "Samsung 970 Evo", "capacity": 1000, "brand": "Samsung", "storageinterface": "NVMe"}
 
 POST /storage/info
@@ -69,8 +69,8 @@ PUT /storage/info
 
 DELETE /storage/info
 
-GET /cooler/info
-Input: {"coolerid": 0}
+GET /cooler/info?coolerid=0
+Input: Url parameter
 Output: {"coolerid": 0, "price": 100, "model": "Corsair H100i", "watercooled": False, "brand": "Corsair", "socket": {"LGA1700", "AM4", "LGA1200"}}
 
 POST /cooler/info
@@ -81,9 +81,9 @@ DELETE /cooler/info
 
 
 
-GET /build
+GET /build?usertoken=1434654564
 Purpose: Get list of user's builds. Returns name and buildid
-Input: {"usertoken": "1434654564"}
+Input: Url parameter
 Output: {0: "My new computer", 1: "My second computer"}
 
 GET /build/info
