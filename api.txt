@@ -81,6 +81,78 @@ DELETE /cooler/info?coolerid=0
 
 
 
+GET /filter/brand
+Purpose: Get list of brands
+Input: None
+Output: ["Intel", "Amd", "Asus", "Gigabyte"]
+
+GET /filter/socket
+Purpose: Get list of cpu sockets
+Input: None
+Output: ["LGA1700", "LGA1200", "AM4"]
+
+GET /filter/pciegen
+Purpose: Get list of pcie generations
+Input: None
+Output: ["PCIe 4.0", "PCIe 5.0"]
+
+GET /filter/ddrgen
+Purpose: Get list of ddr generations
+Input: None
+Output: ["DDR4", "DDR5"]
+
+GET /filter/efficiency
+Purpose: Get list of efficiency ratings
+Input: None
+Output: ["80+ Bronze", "80+ Titanium"]
+
+GET /filter/chipset
+Purpose: Get list of motherboard and gpu chipsets
+Input: None
+Output: ["X570", "Nvidia 4070"]
+
+GET /filter/storageinterface
+Purpose: Get list of storage interfaces
+Input: None
+Output: ["SATA", "NVMe"]
+
+POST /filter/cpu
+Purpose: Filter cpus. ex: price between 0 and 100. Returns json array of cpu info
+Input: {"price": [0, 100], "model": "Intel i7", "speed": [2.0,4.0], "cores": [4,20], "threads":[8,24], "tdp":[50,100], "hasGraphics": 1. "hasCooler": 1, "brand": "Intel", "socket": ["LGA1700", "LGA1200"]}
+Output: [{"cpuid": 0, "price": 100, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": true, "hascooler": false, "brand": "Intel", "socket": "LGA1700", "ddrgen": ["DDR4", "DDR5"]},
+         {"cpuid": 1, "price": 100, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": true, "hascooler": false, "brand": "Intel", "socket": "LGA1700", "ddrgen": ["DDR4", "DDR5"]}
+         ...
+        ]
+
+POST /filter/ram
+Purpose: Filter ram. Returns json array of ram info
+Input: {"price": [0, 100], "model": "Corsair Vengence", "size": [8, 32], "speed": [3000, 4000], "latency": [16, 20], "brand": ["Corsair"], "ddrgen": ["DDR4", "DDR5"]}
+Output: Json array of ram, similar to /filter/cpu
+
+POST /filter/motherboard
+Purpose: Filter motherboards. Returns json array of motherboard info
+Input: {"filter": [0,100], "model": "Asus X470", "usbcount": [2, 6], chipset": ["X470, X570"], "brand": ["Asus", "Gigabyte"], "ddrgen":["DDR4", "DDR5"], "socket": ["AM4"]}
+Output: Json array of ram, similar to /filter/cpu
+
+POST /filter/psu
+Input: {"price": [0,100], "model": "Corsair Rm", "wattage": [500, 1000], "brand": ["Corsair"], "efficiency": ["80+ Gold", "80+ Platinum"]}
+Output: Json array of psu info, similar to /filter/cpu
+
+POST /filter/gpu
+Input: {"price": [0, 100], "model": "Asus 4070", "memory": [8, 16], "speed": [1800, 2000], "hdmicount": [1, 3], "displayportcount":[0, 1], "brand": ["Asus", "Gigabyte"], "chipset": ["Nvidia 4070"]}
+Output: Json array of gpu info, similar to /filter/cpu
+
+POST /filter/storage
+Input: {"price": [0, 100], "model": "Samsung 970", "capacity": [1000, 2000], "brand": ["Samsung", "Western Digital"], "storageinterface": ["NVMe"]}
+Output: Json array of storage info, similar to /filter/cpu
+
+POST /filter/cooler
+Input: {"price": [0, 100], "model": "Corsair H100", "watercooled": 1, "brand": ["Corsair", "NZXT"]}
+Output: Json array of cooler, similar to /filter/cpu
+
+
+
+
 GET /build?usertoken=1434654564
 Purpose: Get list of user's builds. Returns name and buildid
 Input: Url parameter
