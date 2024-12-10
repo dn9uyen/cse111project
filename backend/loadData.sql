@@ -89,13 +89,13 @@ INSERT OR IGNORE INTO ram (ramid, price, model, size, speed, latency, brandid, d
 VALUES (8, 108.99, 'Corsair Dominator Titanium', 64, 6600, 32, 3, 2);
 
 -- Insert data into motherboard table
-INSERT OR IGNORE INTO motherboard (motherboardid, price, model, ramspeed, usbcount, formfactor, chipset, brandid, pciegenid, ddrgenid, socketid)
+INSERT OR IGNORE INTO motherboard (motherboardid, price, model, ramspeed, usbcount, formfactor, chipsetid, brandid, pciegenid, ddrgenid, socketid)
 VALUES (1, 199.99, 'ASUS TUF Gaming B550', 4400, 6, 'ATX', 1, 8, 2, 1, 2);
-INSERT OR IGNORE INTO motherboard (motherboardid, price, model, ramspeed, usbcount, formfactor, chipset, brandid, pciegenid, ddrgenid, socketid)
+INSERT OR IGNORE INTO motherboard (motherboardid, price, model, ramspeed, usbcount, formfactor, chipsetid, brandid, pciegenid, ddrgenid, socketid)
 VALUES (2, 109.99, 'MSI B550 GAMING GEN3', 4400, 10, 'ATX', 1, 10, 2, 1, 2);
-INSERT OR IGNORE INTO motherboard (motherboardid, price, model, ramspeed, usbcount, formfactor, chipset, brandid, pciegenid, ddrgenid, socketid)
+INSERT OR IGNORE INTO motherboard (motherboardid, price, model, ramspeed, usbcount, formfactor, chipsetid, brandid, pciegenid, ddrgenid, socketid)
 VALUES (3, 99.99, 'Gigabyte H410M H V2', 2933, 6, 'Micro ATX', 4, 9, 2, 1, 1);
-INSERT OR IGNORE INTO motherboard (motherboardid, price, model, ramspeed, usbcount, formfactor, chipset, brandid, pciegenid, ddrgenid, socketid)
+INSERT OR IGNORE INTO motherboard (motherboardid, price, model, ramspeed, usbcount, formfactor, chipsetid, brandid, pciegenid, ddrgenid, socketid)
 VALUES (4, 159.99, 'MSI B760 GAMING PLUS WIFI', 6800, 10, 'ATX', 5, 10, 2, 2, 3);
 
 -- Insert data into PSU table with correct brand and efficiency reference

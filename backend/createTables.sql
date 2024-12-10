@@ -36,11 +36,12 @@ CREATE TABLE IF NOT EXISTS motherboard (
     ramspeed INT NOT NULL,            -- Max supported speed, MHz
     usbcount INT NOT NULL,
     formfactor VARCHAR(16) NOT NULL,
-    chipset VARCHAR(16) NOT NULL,
+    chipsetid INT NOT NULL,
     brandid INT NOT NULL,
     pciegenid INT NOT NULL,
     ddrgenid INT NOT NULL,
     socketid INT NOT NULL,
+    FOREIGN KEY (chipsetid) REFERENCES chipset(chipsetid),
     FOREIGN KEY (brandid) REFERENCES brand(brandid),
     FOREIGN KEY (pciegenid) REFERENCES pciegen(pciegenid),
     FOREIGN KEY (ddrgenid) REFERENCES ddrgen(ddrgenid),

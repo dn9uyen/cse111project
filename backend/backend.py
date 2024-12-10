@@ -814,7 +814,6 @@ def filterRam():
                 AND brand.name IN ({'"{}"'.format('", "'.join(body["brand"]))})
                 AND ddrgen.name IN ({'"{}"'.format('", "'.join(body["ddrgen"]))})
         """
-        print(query)
         result = conn.exec_driver_sql(query).fetchall()
         jsonArr = []
         with app.test_client() as client:
@@ -825,7 +824,134 @@ def filterRam():
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
+@app.route("/filter/motherboard", methods=["POST"])
+def filterMotherboard():
+    body = flask.request.get_json()
+    with engine.connect() as conn:
+        query = f"""
+            SELECT motherboardid FROM motherboard
+            JOIN brand ON brand.brandid = motherboard.brandid
+            JOIN chipset ON chipset.chipsetid = motherboard.chipsetid
+            JOIN ddrgen ON ddrgen.ddrgenid = motherboard.ddrgenid
+            JOIN socket ON socket.socketid = motherboard.socketid
+            WHERE motherboard.price BETWEEN {body["price"][0]} AND {body["price"][1]}
+                AND motherboard.model LIKE "{body["model"]}%"
+                AND motherboard.usbcount BETWEEN {body["usbcount"][0]} AND {body["usbcount"][1]}
+                AND chipset.name IN ({'"{}"'.format('", "'.join(body["chipset"]))})
+                AND brand.name IN ({'"{}"'.format('", "'.join(body["brand"]))})
+                AND ddrgen.name IN ({'"{}"'.format('", "'.join(body["ddrgen"]))})
+                AND socket.name IN ({'"{}"'.format('", "'.join(body["socket"]))})
+        """
+        print(query)
+        result = conn.exec_driver_sql(query).fetchall()
+        jsonArr = []
+        with app.test_client() as client:
+            for motherboardid in result:
+                jsonArr.append(client.get(f"http://localhost:5000/motherboard/info?motherboardid={motherboardid[0]}").json)
+            
+    response = flask.make_response(jsonArr)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
+@app.route("/filter/psu", methods=["POST"])
+def filterPsu():
+    body = flask.request.get_json()
+    with engine.connect() as conn:
+        query = f"""
+            SELECT psuid FROM psu
+            JOIN brand ON brand.brandid = psu.brandid
+            JOIN efficiency ON efficiency.efficiencyid = psu.efficiencyid
+            WHERE psu.price BETWEEN {body["price"][0]} AND {body["price"][1]}
+                AND psu.model LIKE "{body["model"]}%"
+                AND psu.wattage BETWEEN {body["wattage"][0]} AND {body["wattage"][1]}
+                AND brand.name IN ({'"{}"'.format('", "'.join(body["brand"]))})
+                AND efficiency.name IN ({'"{}"'.format('", "'.join(body["efficiency"]))})
+        """
+        result = conn.exec_driver_sql(query).fetchall()
+        jsonArr = []
+        with app.test_client() as client:
+            for psuid in result:
+                jsonArr.append(client.get(f"http://localhost:5000/psu/info?psuid={psuid[0]}").json)
+            
+    response = flask.make_response(jsonArr)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
+@app.route("/filter/gpu", methods=["POST"])
+def filterGpu():
+    body = flask.request.get_json()
+    with engine.connect() as conn:
+        query = f"""
+            SELECT gpuid FROM gpu
+            JOIN brand ON brand.brandid = gpu.brandid
+            JOIN chipset ON chipset.chipsetid = gpu.chipsetid
+            WHERE gpu.price BETWEEN {body["price"][0]} AND {body["price"][1]}
+                AND gpu.model LIKE "{body["model"]}%"
+                AND gpu.memory BETWEEN {body["memory"][0]} AND {body["memory"][1]}
+                AND gpu.speed BETWEEN {body["speed"][0]} AND {body["speed"][1]}
+                AND gpu.hdmicount BETWEEN {body["hdmicount"][0]} AND {body["hdmicount"][1]}
+                AND gpu.displayportcount BETWEEN {body["displayportcount"][0]} AND {body["displayportcount"][1]}
+                AND chipset.name IN ({'"{}"'.format('", "'.join(body["chipset"]))})
+                AND brand.name IN ({'"{}"'.format('", "'.join(body["brand"]))})
+        """
+        result = conn.exec_driver_sql(query).fetchall()
+        jsonArr = []
+        with app.test_client() as client:
+            for gpuid in result:
+                jsonArr.append(client.get(f"http://localhost:5000/gpu/info?gpuid={gpuid[0]}").json)
+            
+    response = flask.make_response(jsonArr)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
+@app.route("/filter/storage", methods=["POST"])
+def filterStorage():
+    body = flask.request.get_json()
+    with engine.connect() as conn:
+        query = f"""
+            SELECT storageid FROM storage
+            JOIN brand ON brand.brandid = storage.brandid
+            JOIN storage_interface ON storage_interface.storageinterfaceid = storage.storageinterfaceid
+            WHERE storage.price BETWEEN {body["price"][0]} AND {body["price"][1]}
+                AND storage.model LIKE "{body["model"]}%"
+                AND storage.capacity BETWEEN {body["capacity"][0]} AND {body["capacity"][1]}
+                AND storage_interface.name IN ({'"{}"'.format('", "'.join(body["storageinterface"]))})
+                AND brand.name IN ({'"{}"'.format('", "'.join(body["brand"]))})
+        """
+        result = conn.exec_driver_sql(query).fetchall()
+        jsonArr = []
+        with app.test_client() as client:
+            for storageid in result:
+                jsonArr.append(client.get(f"http://localhost:5000/storage/info?storageid={storageid[0]}").json)
+            
+    response = flask.make_response(jsonArr)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
+@app.route("/filter/cooler", methods=["POST"])
+def filterCooler():
+    body = flask.request.get_json()
+    with engine.connect() as conn:
+        query = f"""
+            SELECT cooler.coolerid FROM cooler
+            JOIN brand ON brand.brandid = cooler.brandid
+            JOIN cooler_socket ON cooler_socket.coolerid = cooler.coolerid
+            JOIN socket ON socket.socketid = cooler_socket.socketid
+            WHERE cooler.price BETWEEN {body["price"][0]} AND {body["price"][1]}
+                AND cooler.model LIKE "{body["model"]}%"
+                AND cooler.watercooled = {body["watercooled"]}
+                AND socket.name IN ({'"{}"'.format('", "'.join(body["socket"]))})
+                AND brand.name IN ({'"{}"'.format('", "'.join(body["brand"]))})
+        """
+        result = conn.exec_driver_sql(query).fetchall()
+        jsonArr = []
+        with app.test_client() as client:
+            for coolerid in result:
+                jsonArr.append(client.get(f"http://localhost:5000/cooler/info?coolerid={coolerid[0]}").json)
+            
+    response = flask.make_response(jsonArr)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 if __name__ == "__main__":
     createTables()

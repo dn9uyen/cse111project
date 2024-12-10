@@ -131,11 +131,11 @@ Output: Json array of ram, similar to /filter/cpu
 
 POST /filter/motherboard
 Purpose: Filter motherboards. Returns json array of motherboard info
-Input: {"filter": [0,100], "model": "Asus X470", "usbcount": [2, 6], chipset": ["X470, X570"], "brand": ["Asus", "Gigabyte"], "ddrgen":["DDR4", "DDR5"], "socket": ["AM4"]}
+Input: {"price": [0,100], "model": "Asus X470", "usbcount": [2, 6], "chipset": ["X470", "X570"], "brand": ["Asus", "Gigabyte"], "ddrgen":["DDR4", "DDR5"], "socket": ["AM4"]}
 Output: Json array of ram, similar to /filter/cpu
 
 POST /filter/psu
-Input: {"price": [0,100], "model": "Corsair Rm", "wattage": [500, 1000], "brand": ["Corsair"], "efficiency": ["80+ Gold", "80+ Platinum"]}
+Input: {"price": [0,100], "model": "", "wattage": [500, 1000], "brand": ["Corsair"], "efficiency": ["80+ Gold", "80+ Platinum"]}
 Output: Json array of psu info, similar to /filter/cpu
 
 POST /filter/gpu
@@ -147,7 +147,7 @@ Input: {"price": [0, 100], "model": "Samsung 970", "capacity": [1000, 2000], "br
 Output: Json array of storage info, similar to /filter/cpu
 
 POST /filter/cooler
-Input: {"price": [0, 100], "model": "Corsair H100", "watercooled": 1, "brand": ["Corsair", "NZXT"]}
+Input: {"price": [0, 100], "model": "Corsair H100", "watercooled": 1, "brand": ["Corsair", "NZXT"], "socket": ["AM4"]}
 Output: Json array of cooler, similar to /filter/cpu
 
 
