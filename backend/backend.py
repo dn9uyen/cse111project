@@ -11,6 +11,22 @@ app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///database.sqlite3"
 db = SQLAlchemy(app)
 engine = create_engine(app.config["SQLALCHEMY_DATABASE_URI"])
 
+# Needed for CORS
+@app.route("/cpu/info", methods=["OPTIONS"])
+@app.route("/ram/info", methods=["OPTIONS"])
+@app.route("/motherboard/info", methods=["OPTIONS"])
+@app.route("/psu/info", methods=["OPTIONS"])
+@app.route("/storage/info", methods=["OPTIONS"])
+@app.route("/gpu/info", methods=["OPTIONS"])
+@app.route("/cooler/info", methods=["OPTIONS"])
+def preflight():
+    response = flask.make_response()
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    response.headers.add("Access-Control-Allow-Headers", "*")
+    response.headers.add("Access-Control-Allow-Methods", "*")
+    return response
+
+
 
 def createTables():
     with open("createTables.sql", "r") as file:
@@ -63,8 +79,9 @@ def getCpuInfo():
             jsonData[col] = val.split(",")
         else:
             jsonData[col] = val
-    print(jsonData)
-    return jsonify(jsonData)
+    response = flask.make_response(jsonData)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 @app.route("/cpu/info", methods=["POST"])
 def addCpuInfo():
@@ -111,7 +128,10 @@ def addCpuInfo():
             conn.exec_driver_sql(query)
         conn.commit()
 
-    return {"cpuid": cpuid}
+    response = flask.make_response({"cpuid": cpuid})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
 
 @app.route("/cpu/info", methods=["PUT"])
 def updateCpuInfo():
@@ -124,6 +144,8 @@ def updateCpuInfo():
         response["cpuid"] = cpuid
         client.post(f"http://localhost:5000/cpu/info", json=response)
 
+    response = flask.make_response(response)
+    response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
 @app.route("/cpu/info", methods=["DELETE"])
@@ -137,7 +159,10 @@ def deleteCpuInfo():
         query = f"DELETE FROM cpu_ddrgen WHERE cpuid = {cpuid}"
         conn.exec_driver_sql(query)
         conn.commit()
-    return response.json
+    response = flask.make_response(response.json)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
 
 
 @app.route("/ram/info", methods=["GET"])
@@ -164,7 +189,9 @@ def getRamInfo():
     jsonData = {}
     for col, val in data.items():
         jsonData[col] = val
-    return jsonify(jsonData)
+    response = flask.make_response(jsonData)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 @app.route("/ram/info", methods=["POST"])
 def addRamInfo():
@@ -200,7 +227,9 @@ def addRamInfo():
 
         conn.commit()
 
-    return {"ramid": ramid}
+    response = flask.make_response({"ramid": ramid})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 @app.route("/ram/info", methods=["PUT"])
 def updateRamInfo():
@@ -213,6 +242,8 @@ def updateRamInfo():
         response["ramid"] = ramid
         client.post(f"http://localhost:5000/ram/info", json=response)
 
+    response = flask.make_response(response)
+    response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
 @app.route("/ram/info", methods=["DELETE"])
@@ -224,7 +255,9 @@ def deleteRamInfo():
         query = f"DELETE FROM ram WHERE ramid = {ramid}"
         conn.exec_driver_sql(query)
         conn.commit()
-    return response.json
+    response = flask.make_response(response.json)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 
 
@@ -260,7 +293,9 @@ def getMotherboardInfo():
             jsonData[col] = val.split(",")
         else:
             jsonData[col] = val
-    return jsonify(jsonData)
+    response = flask.make_response(jsonData)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 @app.route("/motherboard/info", methods=["POST"])
 def addMotherboardInfo():
@@ -307,7 +342,9 @@ def addMotherboardInfo():
             conn.exec_driver_sql(query)
         conn.commit()
 
-    return {"motherboardid": motherboardid}
+    response = flask.make_response({"motherboardid": motherboardid})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 @app.route("/motherboard/info", methods=["PUT"])
 def updateMotherboardInfo():
@@ -320,6 +357,8 @@ def updateMotherboardInfo():
         response["motherboard"] = motherboardid
         client.post(f"http://localhost:5000/motherboard/info", json=response)
 
+    response = flask.make_response(response)
+    response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
 @app.route("/motherboard/info", methods=["DELETE"])
@@ -333,7 +372,9 @@ def deleteMotherboardInfo():
         query = f"DELETE FROM motherboard_storage_interface WHERE motherboardid = {motherboardid}"
         conn.exec_driver_sql(query)
         conn.commit()
-    return response.json
+    response = flask.make_response(response.json)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 
 @app.route("/psu/info", methods=["GET"])
@@ -360,7 +401,9 @@ def getPsuInfo():
     jsonData = {}
     for col, val in data.items():
         jsonData[col] = val
-    return jsonify(jsonData)
+    response = flask.make_response(jsonData)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 @app.route("/psu/info", methods=["POST"])
 def addPsuInfo():
@@ -394,7 +437,9 @@ def addPsuInfo():
 
         conn.commit()
 
-    return {"psuid": psuid}
+    response = flask.make_response({"psuid": psuid})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 @app.route("/psu/info", methods=["PUT"])
 def updatePsuInfo():
@@ -407,6 +452,8 @@ def updatePsuInfo():
         response["psuid"] = psuid
         client.post(f"http://localhost:5000/psu/info", json=response)
 
+    response = flask.make_response(response)
+    response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
 @app.route("/psu/info", methods=["DELETE"])
@@ -418,8 +465,9 @@ def deletePsuInfo():
         query = f"DELETE FROM psu WHERE psuid = {psuid}"
         conn.exec_driver_sql(query)
         conn.commit()
-    return response.json
-
+    response = flask.make_response(response.json)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 
 @app.route("/gpu/info", methods=["GET"])
@@ -447,7 +495,9 @@ def getGpuInfo():
     jsonData = {}
     for col, val in data.items():
         jsonData[col] = val
-    return jsonify(jsonData)
+    response = flask.make_response(jsonData)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 @app.route("/gpu/info", methods=["POST"])
 def addGpuInfo():
@@ -487,7 +537,10 @@ def addGpuInfo():
 
         conn.commit()
 
-    return {"gpuid": gpuid}
+    response = flask.make_response({"gpuid": gpuid})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
 
 @app.route("/gpu/info", methods=["PUT"])
 def updateGpuInfo():
@@ -500,6 +553,8 @@ def updateGpuInfo():
         response["gpuid"] = gpuid
         client.post(f"http://localhost:5000/gpu/info", json=response)
 
+    response = flask.make_response(response)
+    response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
 @app.route("/gpu/info", methods=["DELETE"])
@@ -511,7 +566,9 @@ def deleteGpuInfo():
         query = f"DELETE FROM gpu WHERE gpuid = {gpuid}"
         conn.exec_driver_sql(query)
         conn.commit()
-    return response.json
+    response = flask.make_response(response.json)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 
 
@@ -539,7 +596,9 @@ def getStorageInfo():
     jsonData = {}
     for col, val in data.items():
         jsonData[col] = val
-    return jsonify(jsonData)
+    response = flask.make_response(jsonData)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 @app.route("/storage/info", methods=["POST"])
 def addStorageInfo():
@@ -573,7 +632,9 @@ def addStorageInfo():
 
         conn.commit()
 
-    return {"storageid": storageid}
+    response = flask.make_response({"storageid": storageid})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 @app.route("/storage/info", methods=["PUT"])
 def updateStorageInfo():
@@ -586,6 +647,8 @@ def updateStorageInfo():
         response["storageid"] = storageid
         client.post(f"http://localhost:5000/storage/info", json=response)
 
+    response = flask.make_response(response)
+    response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
 @app.route("/storage/info", methods=["DELETE"])
@@ -597,7 +660,9 @@ def deleteStorageInfo():
         query = f"DELETE FROM storage WHERE storageid = {storageid}"
         conn.exec_driver_sql(query)
         conn.commit()
-    return response.json
+    response = flask.make_response(response.json)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 
 
@@ -629,7 +694,9 @@ def getCoolerInfo():
             jsonData[col] = val.split(",")
         else:
             jsonData[col] = val
-    return jsonify(jsonData)
+    response = flask.make_response(jsonData)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 @app.route("/cooler/info", methods=["POST"])
 def addCoolerInfo():
@@ -667,7 +734,9 @@ def addCoolerInfo():
             conn.exec_driver_sql(query)
         conn.commit()
 
-    return {"coolerid": coolerid}
+    response = flask.make_response({"coolerid": coolerid})
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 @app.route("/cooler/info", methods=["PUT"])
 def updateCoolerInfo():
@@ -680,6 +749,8 @@ def updateCoolerInfo():
         response["coolerid"] = coolerid
         client.post(f"http://localhost:5000/cooler/info", json=response)
 
+    response = flask.make_response(response)
+    response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
 @app.route("/cooler/info", methods=["DELETE"])
@@ -693,7 +764,9 @@ def deleteCoolerInfo():
         query = f"DELETE FROM cooler_socket WHERE coolerid = {coolerid}"
         conn.exec_driver_sql(query)
         conn.commit()
-    return response.json
+    response = flask.make_response(response.json)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 
 
