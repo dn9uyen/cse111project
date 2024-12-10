@@ -152,6 +152,12 @@ Output: Json array of cooler, similar to /filter/cpu
 
 
 
+POST /compatability
+Purpose: Check compatability of a build
+
+
+
+
 
 GET /build?usertoken=1434654564
 Purpose: Get list of user's builds. Returns name and buildid

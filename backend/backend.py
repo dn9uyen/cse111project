@@ -19,6 +19,20 @@ engine = create_engine(app.config["SQLALCHEMY_DATABASE_URI"])
 @app.route("/storage/info", methods=["OPTIONS"])
 @app.route("/gpu/info", methods=["OPTIONS"])
 @app.route("/cooler/info", methods=["OPTIONS"])
+@app.route("/filter/brand", methods=["OPTIONS"])
+@app.route("/filter/socket", methods=["OPTIONS"])
+@app.route("/filter/pciegen", methods=["OPTIONS"])
+@app.route("/filter/ddrgen", methods=["OPTIONS"])
+@app.route("/filter/efficiency", methods=["OPTIONS"])
+@app.route("/filter/chipset", methods=["OPTIONS"])
+@app.route("/filter/storageinterface", methods=["OPTIONS"])
+@app.route("/filter/cpu", methods=["OPTIONS"])
+@app.route("/filter/ram", methods=["OPTIONS"])
+@app.route("/filter/motherboard", methods=["OPTIONS"])
+@app.route("/filter/psu", methods=["OPTIONS"])
+@app.route("/filter/gpu", methods=["OPTIONS"])
+@app.route("/filter/storage", methods=["OPTIONS"])
+@app.route("/filter/cooler", methods=["OPTIONS"])
 def preflight():
     response = flask.make_response()
     response.headers.add("Access-Control-Allow-Origin", "*")
@@ -769,6 +783,15 @@ def deleteCoolerInfo():
 
 
 
+@app.route("/filter/brand", methods=["GET"])
+def getBrand():
+    with engine.connect() as conn:
+        query = " SELECT brand.name FROM brand"
+        result = conn.exec_driver_sql(query).fetchall()
+    data = [i[0] for i in result]
+    response = flask.make_response(data)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 @app.route("/filter/cpu", methods=["POST"])
 def filterCpu():
