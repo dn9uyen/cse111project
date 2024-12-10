@@ -2,6 +2,7 @@ const apiUrl = "http://127.0.0.1:5000"
 
 /*
  * Example usage
+ * You would have to save the returned json from the functions. These examples just send the request on click
     <button onClick={() => getPartInfo("cpu", 1)}>Get info</button>
     <button onClick={() => addPartInfo("cpu", {"price": 1000, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": true, "hascooler": false, "brand": "Intel", "socket": "LGA1700", "ddrgen": ["DDR4", "DDR5"]})}>Add info</button>
     <button onClick={() => changePartInfo("cpu", {"cpuid": 1, "price": 1000, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": true, "hascooler": false, "brand": "Intel", "socket": "LGA1700", "ddrgen": ["DDR4", "DDR5"]})}>Add info</button>
