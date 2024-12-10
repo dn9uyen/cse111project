@@ -237,12 +237,13 @@ def getMotherboardInfo():
         return response
     with engine.connect() as conn:
         query = """
-            SELECT motherboard.*, brand.name AS brand, ddrgen.name AS ddrgen,
-                pciegen.name AS pciegen, GROUP_CONCAT(storage_interface.name, ', ') AS storageinterface
+            SELECT motherboard.*, brand.name AS brand, ddrgen.name AS ddrgen, socket.name AS socket,
+                pciegen.name AS pciegen, GROUP_CONCAT(storage_interface.name, ',') AS storageinterface
             FROM motherboard
             JOIN brand ON motherboard.brandid = brand.brandid
             JOIN ddrgen ON motherboard.ddrgenid = ddrgen.ddrgenid
             JOIN pciegen ON motherboard.pciegenid = pciegen.pciegenid
+            JOIN socket ON motherboard.socketid = socket.socketid
             JOIN motherboard_storage_interface ON motherboard.motherboardid = motherboard_storage_interface.motherboardid
             JOIN storage_interface ON motherboard_storage_interface.storageinterfaceid = storage_interface.storageinterfaceid
             WHERE motherboard.motherboardid = ?
@@ -260,6 +261,79 @@ def getMotherboardInfo():
         else:
             jsonData[col] = val
     return jsonify(jsonData)
+
+@app.route("/motherboard/info", methods=["POST"])
+def addMotherboardInfo():
+    body = flask.request.get_json()
+    rows = {
+        "price": body["price"],
+        "model": body["model"],
+        "ramspeed": body["ramspeed"],
+        "usbcount": body["usbcount"],
+        "formfactor": body["formfactor"],
+        "chipset": body["chipset"],
+    }
+    storageinterface = body["storageinterface"]
+    motherboardid = body.get("motherboardid", None)
+    if motherboardid != None:
+        rows["motherboardid"] = motherboardid
+    
+    with engine.connect() as conn:
+        query = f"SELECT brandid FROM brand WHERE name LIKE '{body["brand"]}'"
+        rows["brandid"] = conn.exec_driver_sql(query).fetchone()[0]
+        query = f"SELECT socketid FROM socket WHERE name LIKE '{body["socket"]}'"
+        rows["socketid"] = conn.exec_driver_sql(query).fetchone()[0]
+        query = f"SELECT pciegenid FROM pciegen WHERE name LIKE '{body["pciegen"]}'"
+        rows["pciegenid"] = conn.exec_driver_sql(query).fetchone()[0]
+        query = f"SELECT ddrgenid FROM ddrgen WHERE name LIKE '{body["ddrgen"]}'"
+        rows["ddrgenid"] = conn.exec_driver_sql(query).fetchone()[0]
+
+        for key, value in rows.items():
+            if type(value) == str:
+                rows[key] = f"'{value}'"
+        query = f"""
+            INSERT OR IGNORE INTO motherboard ({", ".join(rows.keys())}) VALUES ({", ".join(map(str,rows.values()))})
+        """
+        conn.exec_driver_sql(query)
+
+        if motherboardid == None:
+            query = "SELECT last_insert_rowid() AS LastInsertedID;"
+            motherboardid = conn.exec_driver_sql(query).fetchone()[0]
+
+        for interface in storageinterface:
+            query = f"SELECT storageinterfaceid FROM storage_interface WHERE name LIKE '{interface}'"
+            storageinterfaceid = conn.exec_driver_sql(query).fetchone()[0]
+            query = f"INSERT INTO motherboard_storage_interface (motherboardid, storageinterfaceid) VALUES ({motherboardid}, {storageinterfaceid})"
+            conn.exec_driver_sql(query)
+        conn.commit()
+
+    return {"motherboardid": motherboardid}
+
+@app.route("/motherboard/info", methods=["PUT"])
+def updateMotherboardInfo():
+    body = flask.request.get_json()
+    motherboardid = body["motherboardid"]
+    with app.test_client() as client:
+        response = client.delete(f"http://localhost:5000/motherboard/info?motherboardid={motherboardid}").json
+        for col, val in body.items():
+            response[col] = val
+        response["motherboard"] = motherboardid
+        client.post(f"http://localhost:5000/motherboard/info", json=response)
+
+    return response
+
+@app.route("/motherboard/info", methods=["DELETE"])
+def deleteMotherboardInfo():
+    motherboardid = flask.request.args.get("motherboardid")
+    with app.test_client() as client:
+        response = client.get(f"http://localhost:5000/motherboard/info?motherboardid={motherboardid}")
+    with engine.connect() as conn:
+        query = f"DELETE FROM motherboard WHERE motherboardid = {motherboardid}"
+        conn.exec_driver_sql(query)
+        query = f"DELETE FROM motherboard_storage_interface WHERE motherboardid = {motherboardid}"
+        conn.exec_driver_sql(query)
+        conn.commit()
+    return response.json
 
 
 @app.route("/psu/info", methods=["GET"])
@@ -287,6 +361,65 @@ def getPsuInfo():
     for col, val in data.items():
         jsonData[col] = val
     return jsonify(jsonData)
+
+@app.route("/psu/info", methods=["POST"])
+def addPsuInfo():
+    body = flask.request.get_json()
+    rows = {
+        "price": body["price"],
+        "model": body["model"],
+        "wattage": body["wattage"],
+    }
+    psuid = body.get("psuid", None)
+    if psuid != None:
+        rows["psuid"] = psuid
+    
+    with engine.connect() as conn:
+        query = f"SELECT brandid FROM brand WHERE name LIKE '{body["brand"]}'"
+        rows["brandid"] = conn.exec_driver_sql(query).fetchone()[0]
+        query = f"SELECT efficiencyid FROM efficiency WHERE name LIKE '{body["efficiency"]}'"
+        rows["efficiencyid"] = conn.exec_driver_sql(query).fetchone()[0]
+
+        for key, value in rows.items():
+            if type(value) == str:
+                rows[key] = f"'{value}'"
+        query = f"""
+            INSERT OR IGNORE INTO psu ({", ".join(rows.keys())}) VALUES ({", ".join(map(str,rows.values()))})
+        """
+        conn.exec_driver_sql(query)
+
+        if psuid == None:
+            query = "SELECT last_insert_rowid() AS LastInsertedID;"
+            psuid = conn.exec_driver_sql(query).fetchone()[0]
+
+        conn.commit()
+
+    return {"psuid": psuid}
+
+@app.route("/psu/info", methods=["PUT"])
+def updatePsuInfo():
+    body = flask.request.get_json()
+    psuid = body["psuid"]
+    with app.test_client() as client:
+        response = client.delete(f"http://localhost:5000/psu/info?psuid={psuid}").json
+        for col, val in body.items():
+            response[col] = val
+        response["psuid"] = psuid
+        client.post(f"http://localhost:5000/psu/info", json=response)
+
+    return response
+
+@app.route("/psu/info", methods=["DELETE"])
+def deletePsuInfo():
+    psuid = flask.request.args.get("psuid")
+    with app.test_client() as client:
+        response = client.get(f"http://localhost:5000/psu/info?psuid={psuid}")
+    with engine.connect() as conn:
+        query = f"DELETE FROM psu WHERE psuid = {psuid}"
+        conn.exec_driver_sql(query)
+        conn.commit()
+    return response.json
+
 
 
 @app.route("/gpu/info", methods=["GET"])
@@ -316,6 +449,71 @@ def getGpuInfo():
         jsonData[col] = val
     return jsonify(jsonData)
 
+@app.route("/gpu/info", methods=["POST"])
+def addGpuInfo():
+    body = flask.request.get_json()
+    rows = {
+        "price": body["price"],
+        "model": body["model"],
+        "memory": body["memory"],
+        "speed": body["speed"],
+        "boostspeed": body["boostspeed"],
+        "hdmicount": body["hdmicount"],
+        "displayportcount": body["displayportcount"],
+    }
+    gpuid = body.get("gpuid", None)
+    if gpuid != None:
+        rows["gpuid"] = gpuid
+    
+    with engine.connect() as conn:
+        query = f"SELECT brandid FROM brand WHERE name LIKE '{body["brand"]}'"
+        rows["brandid"] = conn.exec_driver_sql(query).fetchone()[0]
+        query = f"SELECT pciegenid FROM pciegen WHERE name LIKE '{body["pciegen"]}'"
+        rows["pciegenid"] = conn.exec_driver_sql(query).fetchone()[0]
+        query = f"SELECT chipsetid FROM chipset WHERE name LIKE '{body["chipset"]}'"
+        rows["chipsetid"] = conn.exec_driver_sql(query).fetchone()[0]
+
+        for key, value in rows.items():
+            if type(value) == str:
+                rows[key] = f"'{value}'"
+        query = f"""
+            INSERT OR IGNORE INTO gpu ({", ".join(rows.keys())}) VALUES ({", ".join(map(str,rows.values()))})
+        """
+        conn.exec_driver_sql(query)
+
+        if gpuid == None:
+            query = "SELECT last_insert_rowid() AS LastInsertedID;"
+            gpuid = conn.exec_driver_sql(query).fetchone()[0]
+
+        conn.commit()
+
+    return {"gpuid": gpuid}
+
+@app.route("/gpu/info", methods=["PUT"])
+def updateGpuInfo():
+    body = flask.request.get_json()
+    gpuid = body["gpuid"]
+    with app.test_client() as client:
+        response = client.delete(f"http://localhost:5000/gpu/info?gpuid={gpuid}").json
+        for col, val in body.items():
+            response[col] = val
+        response["gpuid"] = gpuid
+        client.post(f"http://localhost:5000/gpu/info", json=response)
+
+    return response
+
+@app.route("/gpu/info", methods=["DELETE"])
+def deleteGpuInfo():
+    gpuid = flask.request.args.get("gpuid")
+    with app.test_client() as client:
+        response = client.get(f"http://localhost:5000/gpu/info?gpuid={gpuid}")
+    with engine.connect() as conn:
+        query = f"DELETE FROM gpu WHERE gpuid = {gpuid}"
+        conn.exec_driver_sql(query)
+        conn.commit()
+    return response.json
+
+
 
 @app.route("/storage/info", methods=["GET"])
 def getStorageInfo():
@@ -343,6 +541,65 @@ def getStorageInfo():
         jsonData[col] = val
     return jsonify(jsonData)
 
+@app.route("/storage/info", methods=["POST"])
+def addStorageInfo():
+    body = flask.request.get_json()
+    rows = {
+        "price": body["price"],
+        "model": body["model"],
+        "capacity": body["capacity"],
+    }
+    storageid = body.get("storageid", None)
+    if storageid != None:
+        rows["storageid"] = storageid
+    
+    with engine.connect() as conn:
+        query = f"SELECT brandid FROM brand WHERE name LIKE '{body["brand"]}'"
+        rows["brandid"] = conn.exec_driver_sql(query).fetchone()[0]
+        query = f"SELECT storageinterfaceid FROM storage_interface WHERE name LIKE '{body["storageinterface"]}'"
+        rows["storageinterfaceid"] = conn.exec_driver_sql(query).fetchone()[0]
+
+        for key, value in rows.items():
+            if type(value) == str:
+                rows[key] = f"'{value}'"
+        query = f"""
+            INSERT OR IGNORE INTO storage ({", ".join(rows.keys())}) VALUES ({", ".join(map(str,rows.values()))})
+        """
+        conn.exec_driver_sql(query)
+
+        if storageid == None:
+            query = "SELECT last_insert_rowid() AS LastInsertedID;"
+            storageid = conn.exec_driver_sql(query).fetchone()[0]
+
+        conn.commit()
+
+    return {"storageid": storageid}
+
+@app.route("/storage/info", methods=["PUT"])
+def updateStorageInfo():
+    body = flask.request.get_json()
+    storageid = body["storageid"]
+    with app.test_client() as client:
+        response = client.delete(f"http://localhost:5000/storage/info?storageid={storageid}").json
+        for col, val in body.items():
+            response[col] = val
+        response["storageid"] = storageid
+        client.post(f"http://localhost:5000/storage/info", json=response)
+
+    return response
+
+@app.route("/storage/info", methods=["DELETE"])
+def deleteStorageInfo():
+    storageid = flask.request.args.get("storageid")
+    with app.test_client() as client:
+        response = client.get(f"http://localhost:5000/storage/info?storageid={storageid}")
+    with engine.connect() as conn:
+        query = f"DELETE FROM storage WHERE storageid = {storageid}"
+        conn.exec_driver_sql(query)
+        conn.commit()
+    return response.json
+
+
 
 @app.route("/cooler/info", methods=["GET"])
 def getCoolerInfo():
@@ -353,7 +610,7 @@ def getCoolerInfo():
         return response
     with engine.connect() as conn:
         query = """
-            SELECT cooler.*, brand.name AS brand, GROUP_CONCAT(socket.name, ', ') AS socket
+            SELECT cooler.*, brand.name AS brand, GROUP_CONCAT(socket.name, ',') AS socket
             FROM cooler
             JOIN brand ON cooler.brandid = brand.brandid
             JOIN cooler_socket ON cooler.coolerid = cooler_socket.coolerid
@@ -373,6 +630,71 @@ def getCoolerInfo():
         else:
             jsonData[col] = val
     return jsonify(jsonData)
+
+@app.route("/cooler/info", methods=["POST"])
+def addCoolerInfo():
+    body = flask.request.get_json()
+    rows = {
+        "price": body["price"],
+        "model": body["model"],
+        "watercooled": body["watercooled"],
+    }
+    sockets = body["socket"]
+    coolerid = body.get("coolerid", None)
+    if coolerid != None:
+        rows["coolerid"] = coolerid
+    
+    with engine.connect() as conn:
+        query = f"SELECT brandid FROM brand WHERE name LIKE '{body["brand"]}'"
+        rows["brandid"] = conn.exec_driver_sql(query).fetchone()[0]
+
+        for key, value in rows.items():
+            if type(value) == str:
+                rows[key] = f"'{value}'"
+        query = f"""
+            INSERT OR IGNORE INTO cooler ({", ".join(rows.keys())}) VALUES ({", ".join(map(str,rows.values()))})
+        """
+        conn.exec_driver_sql(query)
+
+        if coolerid == None:
+            query = "SELECT last_insert_rowid() AS LastInsertedID;"
+            coolerid = conn.exec_driver_sql(query).fetchone()[0]
+
+        for socket in sockets:
+            query = f"SELECT socketid FROM socket WHERE name LIKE '{socket}'"
+            socketid = conn.exec_driver_sql(query).fetchone()[0]
+            query = f"INSERT INTO cooler_socket (coolerid, socketid) VALUES ({coolerid}, {socketid})"
+            conn.exec_driver_sql(query)
+        conn.commit()
+
+    return {"coolerid": coolerid}
+
+@app.route("/cooler/info", methods=["PUT"])
+def updateCoolerInfo():
+    body = flask.request.get_json()
+    coolerid = body["coolerid"]
+    with app.test_client() as client:
+        response = client.delete(f"http://localhost:5000/cooler/info?coolerid={coolerid}").json
+        for col, val in body.items():
+            response[col] = val
+        response["coolerid"] = coolerid
+        client.post(f"http://localhost:5000/cooler/info", json=response)
+
+    return response
+
+@app.route("/cooler/info", methods=["DELETE"])
+def deleteCoolerInfo():
+    coolerid = flask.request.args.get("coolerid")
+    with app.test_client() as client:
+        response = client.get(f"http://localhost:5000/cooler/info?coolerid={coolerid}")
+    with engine.connect() as conn:
+        query = f"DELETE FROM cooler WHERE coolerid = {coolerid}"
+        conn.exec_driver_sql(query)
+        query = f"DELETE FROM cooler_socket WHERE coolerid = {coolerid}"
+        conn.exec_driver_sql(query)
+        conn.commit()
+    return response.json
+
 
 
 if __name__ == "__main__":
