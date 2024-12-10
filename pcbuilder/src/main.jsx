@@ -1,43 +1,49 @@
 import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
 
 function App() {
-  const [data, setData] = useState('Select an option to get started!');
-
-  // Generic API request function
-  const handleApiRequest = async (endpoint, method = 'GET', body = null) => {
-    const options = {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      ...(body && { body: JSON.stringify(body) })
-    };
-    try {
-      const response = await fetch(`http://127.0.0.1:5000/${endpoint}`, options);
-      const jsonData = await response.json();
-      setData(JSON.stringify(jsonData, null, 2));
-    } catch (error) {
-      console.error('API request failed:', error);
-      setData('Failed to fetch data');
-    }
-  };
-
   return (
-    <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-      <h1>PC Builder Tool</h1>
-      <div>
-        <button onClick={() => handleApiRequest('builds/new')}>Create a Build</button>
-        <button onClick={() => handleApiRequest('parts/filter', 'POST', { price: 200, type: 'CPU' })}>Filter Parts</button>
-        <button onClick={() => handleApiRequest('compatibility/check', 'POST', { cpuId: 1, ramId: 2 })}>Check Compatibility</button>
-        <button onClick={() => handleApiRequest('builds/save', 'POST', { buildId: 123 })}>Save Build</button>
-        <button onClick={() => handleApiRequest('builds/load?buildId=123')}>Load Build</button>
-        <button onClick={() => handleApiRequest('parts/compare', 'POST', { partIds: [1, 2, 3] })}>Compare Parts</button>
-        <button onClick={() => handleApiRequest('cpu/info?cpuid=1')}>View Component Details</button>
+    <Router>
+      <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
+        <h1>PC Builder Tool</h1>
+        <nav>
+          <ul>
+            <li><Link to="/save-build">Save and Load Build</Link></li>
+            <li><Link to="/filter-parts">Filter Parts</Link></li>
+            <li><Link to="/compare-parts">Compare Parts</Link></li>
+            <li><Link to="/view-component-details">View Component Details</Link></li>
+          </ul>
+        </nav>
+        <Routes>
+          <Route path="/save-build" element={<SaveBuild />} />
+          <Route path="/filter-parts" element={<FilterParts />} />
+          <Route path="/compare-parts" element={<CompareParts />} />
+          <Route path="/view-component-details" element={<ViewComponentDetails />} />
+        </Routes>
       </div>
-      <section id="content-area" style={{ marginTop: "20px", whiteSpace: "pre-wrap" }}>
-        <pre>{data}</pre>
-      </section>
-    </div>
+    </Router>
   );
+}
+
+function SaveBuild() {
+  // Placeholder for your Save and Load build functionality
+  return <div><h2>Save and Load Build Page</h2></div>;
+}
+
+function FilterParts() {
+  // Placeholder, replace with actual filtering UI
+  return <div><h2>Filter Parts Page</h2></div>;
+}
+
+function CompareParts() {
+  // Placeholder, replace with actual comparison UI
+  return <div><h2>Compare Parts Page</h2></div>;
+}
+
+function ViewComponentDetails() {
+  // Placeholder, replace with actual view component details UI
+  return <div><h2>View Component Details Page</h2></div>;
 }
 
 const container = document.getElementById('root');

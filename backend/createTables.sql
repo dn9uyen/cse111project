@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS ram (
     model VARCHAR(128) NOT NULL,
     size INT NOT NULL, -- GB
     speed INT NOT NULL, -- MHz
-    latency VARCHAR(20) NOT NULL, -- CL latency
+    latency INT NOT NULL, -- CL latency
     brandid INT NOT NULL,
     ddrgenid INT NOT NULL,
     FOREIGN KEY (brandid) REFERENCES brand(brandid),

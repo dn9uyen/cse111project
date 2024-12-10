@@ -27,7 +27,6 @@ def preflight():
     return response
 
 
-
 def createTables():
     with open("createTables.sql", "r") as file:
         script = file.read()
@@ -765,6 +764,64 @@ def deleteCoolerInfo():
         conn.exec_driver_sql(query)
         conn.commit()
     response = flask.make_response(response.json)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
+
+
+
+@app.route("/filter/cpu", methods=["POST"])
+def filterCpu():
+    body = flask.request.get_json()
+    with engine.connect() as conn:
+        query = f"""
+            SELECT cpuid FROM cpu
+            JOIN brand ON brand.brandid = cpu.brandid
+            JOIN socket ON socket.socketid = cpu.socketid
+            WHERE cpu.price BETWEEN {body["price"][0]} AND {body["price"][1]}
+                AND cpu.model LIKE "{body["model"]}%"
+                AND cpu.speed BETWEEN {body["speed"][0]} AND {body["speed"][1]}
+                AND cpu.cores BETWEEN {body["cores"][0]} AND {body["cores"][1]}
+                AND cpu.threads BETWEEN {body["threads"][0]} AND {body["threads"][1]}
+                AND cpu.hasGraphics = {body["hasGraphics"]}
+                AND cpu.hasCooler = {body["hasCooler"]}
+                AND brand.name IN ({'"{}"'.format('", "'.join(body["brand"]))})
+                AND socket.name IN ({'"{}"'.format('", "'.join(body["socket"]))})
+        """
+        result = conn.exec_driver_sql(query).fetchall()
+        jsonArr = []
+        with app.test_client() as client:
+            for cpuid in result:
+                jsonArr.append(client.get(f"http://localhost:5000/cpu/info?cpuid={cpuid[0]}").json)
+            
+    response = flask.make_response(jsonArr)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
+@app.route("/filter/ram", methods=["POST"])
+def filterRam():
+    body = flask.request.get_json()
+    with engine.connect() as conn:
+        query = f"""
+            SELECT ramid FROM ram
+            JOIN brand ON brand.brandid = ram.brandid
+            JOIN ddrgen ON ddrgen.ddrgenid = ram.ddrgenid
+            WHERE ram.price BETWEEN {body["price"][0]} AND {body["price"][1]}
+                AND ram.model LIKE "{body["model"]}%"
+                AND ram.size BETWEEN {body["size"][0]} AND {body["size"][1]}
+                AND ram.speed BETWEEN {body["speed"][0]} AND {body["speed"][1]}
+                AND ram.latency BETWEEN {body["latency"][0]} AND {body["latency"][1]}
+                AND brand.name IN ({'"{}"'.format('", "'.join(body["brand"]))})
+                AND ddrgen.name IN ({'"{}"'.format('", "'.join(body["ddrgen"]))})
+        """
+        print(query)
+        result = conn.exec_driver_sql(query).fetchall()
+        jsonArr = []
+        with app.test_client() as client:
+            for ramid in result:
+                jsonArr.append(client.get(f"http://localhost:5000/ram/info?ramid={ramid[0]}").json)
+            
+    response = flask.make_response(jsonArr)
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 

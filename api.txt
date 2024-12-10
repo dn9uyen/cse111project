@@ -118,7 +118,7 @@ Output: ["SATA", "NVMe"]
 
 POST /filter/cpu
 Purpose: Filter cpus. ex: price between 0 and 100. Returns json array of cpu info
-Input: {"price": [0, 100], "model": "Intel i7", "speed": [2.0,4.0], "cores": [4,20], "threads":[8,24], "tdp":[50,100], "hasGraphics": 1. "hasCooler": 1, "brand": ["Intel"], "socket": ["LGA1700", "LGA1200"]}
+Input: {"price": [0, 100], "model": "Intel i7", "speed": [2.0,4.0], "cores": [4,20], "threads":[8,24], "tdp":[50,100], "hasGraphics": 1, "hasCooler": 1, "brand": ["Intel"], "socket": ["LGA1700", "LGA1200"]}
 Output: [{"cpuid": 0, "price": 100, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": true, "hascooler": false, "brand": "Intel", "socket": "LGA1700", "ddrgen": ["DDR4", "DDR5"]},
          {"cpuid": 1, "price": 100, "model": "Intel Core i7 14700", "speed": 4.0, "boostspeed": 5.0, "cores": 16, "threads": "24", "tdp": 150, "wattage": 150, "hasgraphics": true, "hascooler": false, "brand": "Intel", "socket": "LGA1700", "ddrgen": ["DDR4", "DDR5"]}
          ...

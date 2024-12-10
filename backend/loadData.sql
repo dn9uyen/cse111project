@@ -72,21 +72,21 @@ VALUES (7, 200.99, 'AMD Ryzen 5700X3D', 3.0, 4.1, 8, 16, 105, 120, 0, 0, 2, 2);
 
 -- Insert data into the RAM table (with new size attribute)
 INSERT OR IGNORE INTO ram (ramid, price, model, size, speed, latency, brandid, ddrgenid)
-VALUES (1, 89.99, 'Corsair Vengeance LPX', 16, 3200, 'CL16', 3, 1);
+VALUES (1, 89.99, 'Corsair Vengeance LPX', 16, 3200, 16, 3, 1);
 INSERT OR IGNORE INTO ram (ramid, price, model, size, speed, latency, brandid, ddrgenid)
-VALUES (2, 108.99, 'Corsair Vengeance RGB', 32, 3600, 'CL18', 3, 1);
+VALUES (2, 108.99, 'Corsair Vengeance RGB', 32, 3600, 18, 3, 1);
 INSERT OR IGNORE INTO ram (ramid, price, model, size, speed, latency, brandid, ddrgenid)
-VALUES (3, 109.99, 'G.Skill Ripjaws V', 32, 3600, 'CL18', 4, 1);
+VALUES (3, 109.99, 'G.Skill Ripjaws V', 32, 3600, 18, 4, 1);
 INSERT OR IGNORE INTO ram (ramid, price, model, size, speed, latency, brandid, ddrgenid)
-VALUES (4, 79.99, 'G.Skill Ripjaws V', 16, 3600, 'CL18', 4, 1);
+VALUES (4, 79.99, 'G.Skill Ripjaws V', 16, 3600, 18, 4, 1);
 INSERT OR IGNORE INTO ram (ramid, price, model, size, speed, latency, brandid, ddrgenid)
-VALUES (5, 189.99, 'G.Skill Triden Z5 RGB', 64, 6400, 'CL32', 4, 2);
+VALUES (5, 189.99, 'G.Skill Triden Z5 RGB', 64, 6400, 32, 4, 2);
 INSERT OR IGNORE INTO ram (ramid, price, model, size, speed, latency, brandid, ddrgenid)
-VALUES (6, 119.99, 'Corsair Vengeance', 32, 6000, 'CL30', 3, 2);
+VALUES (6, 119.99, 'Corsair Vengeance', 32, 6000, 30, 3, 2);
 INSERT OR IGNORE INTO ram (ramid, price, model, size, speed, latency, brandid, ddrgenid)
-VALUES (7, 119.99, 'Corsair Vengeance', 32, 6000, 'CL30', 3, 2);
+VALUES (7, 119.99, 'Corsair Vengeance', 32, 6000, 30, 3, 2);
 INSERT OR IGNORE INTO ram (ramid, price, model, size, speed, latency, brandid, ddrgenid)
-VALUES (8, 108.99, 'Corsair Dominator Titanium', 64, 6600, 'CL32', 3, 2);
+VALUES (8, 108.99, 'Corsair Dominator Titanium', 64, 6600, 32, 3, 2);
 
 -- Insert data into motherboard table
 INSERT OR IGNORE INTO motherboard (motherboardid, price, model, ramspeed, usbcount, formfactor, chipset, brandid, pciegenid, ddrgenid, socketid)
