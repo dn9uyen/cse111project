@@ -154,8 +154,8 @@ Output: Json array of cooler, similar to /filter/cpu
 
 POST /compatability
 Purpose: Check compatability of a build
-
-
+Input: {"cpuid":0, "ramid":0, "motherboardid":0, "psuid":0, "gpuid":0, "storageid":0, "coolerid":0}
+Output: {"conflicts": [["cpu", "motherboard"], ["cpu", "ram"]]}
 
 
 

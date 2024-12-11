@@ -976,6 +976,15 @@ def filterCooler():
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
+@app.route("/compatability", methods=["POST"])
+def checkCompatability():
+    body = flask.request.get_json()
+    return "a"
+
+
+# @app.route("/build?user")
+
+
 if __name__ == "__main__":
     createTables()
     loadData()

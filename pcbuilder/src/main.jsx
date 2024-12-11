@@ -1,55 +1,63 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { createRoot } from 'react-dom/client';
+import { getPartInfo, getTable } from './api'; // Adjust the path as necessary
 
 function App() {
-  return (
-    <Router>
-      <div style={{ padding: "20px", fontFamily: "Arial, sans-serif" }}>
-        <h1>PC Builder Tool</h1>
-        <nav>
-          <ul>
-            <li><Link to="/save-build">Save and Load Build</Link></li>
-            <li><Link to="/filter-parts">Filter Parts</Link></li>
-            <li><Link to="/compare-parts">Compare Parts</Link></li>
-            <li><Link to="/view-component-details">View Component Details</Link></li>
-          </ul>
-        </nav>
-        <Routes>
-          <Route path="/save-build" element={<SaveBuild />} />
-          <Route path="/filter-parts" element={<FilterParts />} />
-          <Route path="/compare-parts" element={<CompareParts />} />
-          <Route path="/view-component-details" element={<ViewComponentDetails />} />
-        </Routes>
-      </div>
-    </Router>
-  );
-}
+    const [data, setData] = useState('Select an option to get started!');
+    const [error, setError] = useState('');
 
-function SaveBuild() {
-  // Placeholder for your Save and Load build functionality
-  return <div><h2>Save and Load Build Page</h2></div>;
-}
+    // Fetch part info by type and id
+    const fetchPartInfo = async (partType, partId) => {
+        try {
+            const info = await getPartInfo(partType, partId);
+            setData(JSON.stringify(info, null, 2));
+            setError('');
+        } catch (err) {
+            setError(`Failed to fetch ${partType} data`);
+            console.error('API request failed:', err);
+        }
+    };
 
-function FilterParts() {
-  // Placeholder, replace with actual filtering UI
-  return <div><h2>Filter Parts Page</h2></div>;
-}
+    // Get table info (e.g., brands)
+    const handleGetTable = async (tableName) => {
+        try {
+            const tableInfo = await getTable(tableName);
+            setData(JSON.stringify(tableInfo, null, 2));
+            setError('');
+        } catch (err) {
+            setError(`Failed to fetch ${tableName}`);
+            console.error('API request failed:', err);
+        }
+    };
 
-function CompareParts() {
-  // Placeholder, replace with actual comparison UI
-  return <div><h2>Compare Parts Page</h2></div>;
-}
+    // Display all parts types available in the system
+    const partTypes = ['cpu', 'ram', 'motherboard', 'psu', 'gpu', 'storage', 'cooler'];
 
-function ViewComponentDetails() {
-  // Placeholder, replace with actual view component details UI
-  return <div><h2>View Component Details Page</h2></div>;
+    return (
+        <div style={{ padding: "20px", fontFamily: "Arial, sans-serif", display: "flex", flexDirection: "column", alignItems: "center" }}>
+            <h1>PC Builder Tool</h1>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            <div>
+                {partTypes.map((partType) => (
+                    <button key={partType} onClick={() => fetchPartInfo(partType, 1)} style={{ margin: "5px" }}>
+                        Choose {partType.toUpperCase()}
+                    </button>
+                ))}
+                <button onClick={() => handleGetTable('brand')} style={{ margin: "5px" }}>
+                    Get Brands
+                </button>
+            </div>
+            <div style={{ marginTop: "20px", whiteSpace: "pre-wrap" }}>
+                <pre>{data}</pre>
+            </div>
+        </div>
+    );
 }
 
 const container = document.getElementById('root');
 if (container) {
-  const root = createRoot(container);
-  root.render(<App />);
+    const root = createRoot(container);
+    root.render(<App />);
 } else {
-  console.error('Failed to find the root element. Ensure your HTML file has an element with ID "root".');
+    console.error('Failed to find the root element. Ensure your HTML file has an element with ID "root".');
 }
