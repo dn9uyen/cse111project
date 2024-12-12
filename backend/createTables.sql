@@ -164,28 +164,28 @@ CREATE TABLE IF NOT EXISTS cooler_socket (
 
 
 
-CREATE TABLE IF NOT EXISTS user (
-    userid INTEGER PRIMARY KEY,
-    username VARCHAR(32) NOT NULL,
-    password VARCHAR(60) NOT NULL -- hashed if we have time to implement
-);
-
-CREATE TABLE IF NOT EXISTS build (
-    buildid INTEGER,
-    userid INTEGER,
-    cpuid INT,
-    ramid INT,
-    motherboardid INT,
-    psuid INT,
-    gpuid INT,
-    storageid INT,
-    PRIMARY KEY (buildid, userid)
-    FOREIGN KEY (userid) REFERENCES users(userid),
-    FOREIGN KEY (cpuid) REFERENCES cpu(cpuid),
-    FOREIGN KEY (ramid) REFERENCES ram(ramid),
-    FOREIGN KEY (motherboardid) REFERENCES motherboard(motherboardid),
-    FOREIGN KEY (psuid) REFERENCES psu(psuid),
-    FOREIGN KEY (gpuid) REFERENCES gpu(gpuid),
-    FOREIGN KEY (storageid) REFERENCES storage(storageid)
-);
-
+-- CREATE TABLE IF NOT EXISTS user (
+--     userid INTEGER PRIMARY KEY,
+--     username VARCHAR(32) NOT NULL,
+--     password VARCHAR(60) NOT NULL -- hashed if we have time to implement
+-- );
+--
+-- CREATE TABLE IF NOT EXISTS build (
+--     buildid INTEGER,
+--     userid INTEGER,
+--     cpuid INT,
+--     ramid INT,
+--     motherboardid INT,
+--     psuid INT,
+--     gpuid INT,
+--     storageid INT,
+--     PRIMARY KEY (buildid, userid)
+--     FOREIGN KEY (userid) REFERENCES users(userid),
+--     FOREIGN KEY (cpuid) REFERENCES cpu(cpuid),
+--     FOREIGN KEY (ramid) REFERENCES ram(ramid),
+--     FOREIGN KEY (motherboardid) REFERENCES motherboard(motherboardid),
+--     FOREIGN KEY (psuid) REFERENCES psu(psuid),
+--     FOREIGN KEY (gpuid) REFERENCES gpu(gpuid),
+--     FOREIGN KEY (storageid) REFERENCES storage(storageid)
+-- );
+--

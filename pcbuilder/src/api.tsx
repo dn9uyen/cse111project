@@ -10,12 +10,12 @@ const apiUrl = "http://127.0.0.1:5000"
     <button onClick={() => filterPart("cpu", {"price": [0, 100], "model": "In", "speed": [2.0,5.0], "cores": [4,20], "threads":[8,24], "tdp":[50,200], "hasGraphics": 1, "hasCooler": 0, "brand": ["Intel"], "socket": ["LGA1700", "LGA1200"]})}>Get table</button>
  */
 
-export async function getPartInfo(partType, partId) {
+export async function getPartInfo(partType: string, partId: number) {
     // partType can be: cpu, ram, motherboard, psu, gpu, storage, cooler
     // partId is an int
     // Use this to get info for a specific part
     // Returns a json of the part info
-    const response = await fetch(`${apiUrl}/cpu/info?${partType}id=${partId}`, {
+    const response = await fetch(`${apiUrl}/${partType}/info?${partType}id=${partId}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -28,7 +28,7 @@ export async function getPartInfo(partType, partId) {
     return json
 }
 
-export async function addPartInfo(partType, partInfo) {
+export async function addPartInfo(partType: string, partInfo: any) {
     // Add new part to database
     // partType can be: cpu, ram, motherboard, psu, gpu, storage, cooler
     // partInfo is a json of the corresponding info
@@ -54,7 +54,7 @@ export async function addPartInfo(partType, partInfo) {
     return json
 }
 
-export async function changePartInfo(partType, partInfo) {
+export async function changePartInfo(partType: string, partInfo: any) {
     // Update part info in database. Not required to include all attributes
     // partType can be: cpu, ram, motherboard, psu, gpu, storage, cooler
     // partInfo examples same as addPartInfo()
@@ -73,7 +73,7 @@ export async function changePartInfo(partType, partInfo) {
     return json
 }
 
-export async function deletePartInfo(partType, partId) {
+export async function deletePartInfo(partType: string, partId: any) {
     // partType can be: cpu, ram, motherboard, psu, gpu, storage, cooler
     // partId is an int
     // Use this to delete a specific part
@@ -91,7 +91,7 @@ export async function deletePartInfo(partType, partId) {
     return json
 }
 
-export async function getTable(table) {
+export async function getTable(table: any) {
     // Use this to get tables to use in other queries
     // Ex: list of brands like ["Corsair", "Intel", "Asus"]
     // Possible tables: brand, socket, pciegen, ddrgen, efficiency, chipset, storageinterface
@@ -109,7 +109,7 @@ export async function getTable(table) {
     return json
 }
 
-export async function filterPart(partType, filter) {
+export async function filterPart(partType: string, filter: any) {
     // Use this to filter for a part type
     // partType can be: cpu, ram, motherboard, psu, gpu, storage, cooler
     // Returns a json array of part info. [{part info}, {part info}, {part info}]
@@ -135,5 +135,28 @@ export async function filterPart(partType, filter) {
     if (response.status != 200) {
         return new Error(json)
     }
+    json.forEach(obj => delete obj.brandid);
+    json.forEach(obj => delete obj.socketid);
+    json.forEach(obj => delete obj.efficiencyid);
+    json.forEach(obj => delete obj.storageinterfaceid);
+    json.forEach(obj => delete obj.chipsetid);
+    json.forEach(obj => delete obj.pciegenid);
+    json.forEach(obj => delete obj.ddrgenid);
+    return json
+}
+
+export async function getCompatability(partIds: any) {
+    const response = await fetch(`${apiUrl}/compatability`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(partIds)
+    });
+    const json = await response.json()
+    if (response.status != 200) {
+        return new Error(json)
+    }
+    console.log(json)
     return json
 }

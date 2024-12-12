@@ -33,6 +33,7 @@ engine = create_engine(app.config["SQLALCHEMY_DATABASE_URI"])
 @app.route("/filter/gpu", methods=["OPTIONS"])
 @app.route("/filter/storage", methods=["OPTIONS"])
 @app.route("/filter/cooler", methods=["OPTIONS"])
+@app.route("/compatability", methods=["OPTIONS"])
 def preflight():
     response = flask.make_response()
     response.headers.add("Access-Control-Allow-Origin", "*")
@@ -117,9 +118,9 @@ def addCpuInfo():
         rows["cpuid"] = cpuid
     
     with engine.connect() as conn:
-        query = f"SELECT brandid FROM brand WHERE name LIKE '{body["brand"]}'"
+        query = f"SELECT brandid FROM brand WHERE name LIKE '{body['brand']}'"
         rows["brandid"] = conn.exec_driver_sql(query).fetchone()[0]
-        query = f"SELECT socketid FROM socket WHERE name LIKE '{body["socket"]}'"
+        query = f"SELECT socketid FROM socket WHERE name LIKE '{body['socket']}'"
         rows["socketid"] = conn.exec_driver_sql(query).fetchone()[0]
 
         for key, value in rows.items():
@@ -221,9 +222,9 @@ def addRamInfo():
         rows["ramid"] = ramid
     
     with engine.connect() as conn:
-        query = f"SELECT brandid FROM brand WHERE name LIKE '{body["brand"]}'"
+        query = f"SELECT brandid FROM brand WHERE name LIKE '{body['brand']}'"
         rows["brandid"] = conn.exec_driver_sql(query).fetchone()[0]
-        query = f"SELECT ddrgenid FROM ddrgen WHERE name LIKE '{body["ddrgen"]}'"
+        query = f"SELECT ddrgenid FROM ddrgen WHERE name LIKE '{body['ddrgen']}'"
         rows["ddrgenid"] = conn.exec_driver_sql(query).fetchone()[0]
 
         for key, value in rows.items():
@@ -327,13 +328,13 @@ def addMotherboardInfo():
         rows["motherboardid"] = motherboardid
     
     with engine.connect() as conn:
-        query = f"SELECT brandid FROM brand WHERE name LIKE '{body["brand"]}'"
+        query = f"SELECT brandid FROM brand WHERE name LIKE '{body['brand']}'"
         rows["brandid"] = conn.exec_driver_sql(query).fetchone()[0]
-        query = f"SELECT socketid FROM socket WHERE name LIKE '{body["socket"]}'"
+        query = f"SELECT socketid FROM socket WHERE name LIKE '{body['socket']}'"
         rows["socketid"] = conn.exec_driver_sql(query).fetchone()[0]
-        query = f"SELECT pciegenid FROM pciegen WHERE name LIKE '{body["pciegen"]}'"
+        query = f"SELECT pciegenid FROM pciegen WHERE name LIKE '{body['pciegen']}'"
         rows["pciegenid"] = conn.exec_driver_sql(query).fetchone()[0]
-        query = f"SELECT ddrgenid FROM ddrgen WHERE name LIKE '{body["ddrgen"]}'"
+        query = f"SELECT ddrgenid FROM ddrgen WHERE name LIKE '{body['ddrgen']}'"
         rows["ddrgenid"] = conn.exec_driver_sql(query).fetchone()[0]
 
         for key, value in rows.items():
@@ -431,9 +432,9 @@ def addPsuInfo():
         rows["psuid"] = psuid
     
     with engine.connect() as conn:
-        query = f"SELECT brandid FROM brand WHERE name LIKE '{body["brand"]}'"
+        query = f"SELECT brandid FROM brand WHERE name LIKE '{body['brand']}'"
         rows["brandid"] = conn.exec_driver_sql(query).fetchone()[0]
-        query = f"SELECT efficiencyid FROM efficiency WHERE name LIKE '{body["efficiency"]}'"
+        query = f"SELECT efficiencyid FROM efficiency WHERE name LIKE '{body['efficiency']}'"
         rows["efficiencyid"] = conn.exec_driver_sql(query).fetchone()[0]
 
         for key, value in rows.items():
@@ -529,11 +530,11 @@ def addGpuInfo():
         rows["gpuid"] = gpuid
     
     with engine.connect() as conn:
-        query = f"SELECT brandid FROM brand WHERE name LIKE '{body["brand"]}'"
+        query = f"SELECT brandid FROM brand WHERE name LIKE '{body['brand']}'"
         rows["brandid"] = conn.exec_driver_sql(query).fetchone()[0]
-        query = f"SELECT pciegenid FROM pciegen WHERE name LIKE '{body["pciegen"]}'"
+        query = f"SELECT pciegenid FROM pciegen WHERE name LIKE '{body['pciegen']}'"
         rows["pciegenid"] = conn.exec_driver_sql(query).fetchone()[0]
-        query = f"SELECT chipsetid FROM chipset WHERE name LIKE '{body["chipset"]}'"
+        query = f"SELECT chipsetid FROM chipset WHERE name LIKE '{body['chipset']}'"
         rows["chipsetid"] = conn.exec_driver_sql(query).fetchone()[0]
 
         for key, value in rows.items():
@@ -626,9 +627,9 @@ def addStorageInfo():
         rows["storageid"] = storageid
     
     with engine.connect() as conn:
-        query = f"SELECT brandid FROM brand WHERE name LIKE '{body["brand"]}'"
+        query = f"SELECT brandid FROM brand WHERE name LIKE '{body['brand']}'"
         rows["brandid"] = conn.exec_driver_sql(query).fetchone()[0]
-        query = f"SELECT storageinterfaceid FROM storage_interface WHERE name LIKE '{body["storageinterface"]}'"
+        query = f"SELECT storageinterfaceid FROM storage_interface WHERE name LIKE '{body['storageinterface']}'"
         rows["storageinterfaceid"] = conn.exec_driver_sql(query).fetchone()[0]
 
         for key, value in rows.items():
@@ -725,7 +726,7 @@ def addCoolerInfo():
         rows["coolerid"] = coolerid
     
     with engine.connect() as conn:
-        query = f"SELECT brandid FROM brand WHERE name LIKE '{body["brand"]}'"
+        query = f"SELECT brandid FROM brand WHERE name LIKE '{body['brand']}'"
         rows["brandid"] = conn.exec_driver_sql(query).fetchone()[0]
 
         for key, value in rows.items():
@@ -792,6 +793,68 @@ def getBrand():
     response = flask.make_response(data)
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
+@app.route("/filter/socket", methods=["GET"])
+def getSocket():
+    with engine.connect() as conn:
+        query = " SELECT socket.name FROM socket"
+        result = conn.exec_driver_sql(query).fetchall()
+    data = [i[0] for i in result]
+    response = flask.make_response(data)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+@app.route("/filter/pciegen", methods=["GET"])
+def getPciegen():
+    with engine.connect() as conn:
+        query = " SELECT pciegen.name FROM pciegen"
+        result = conn.exec_driver_sql(query).fetchall()
+    data = [i[0] for i in result]
+    response = flask.make_response(data)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+@app.route("/filter/ddrgen", methods=["GET"])
+def getDdrgen():
+    with engine.connect() as conn:
+        query = " SELECT ddrgen.name FROM ddrgen"
+        result = conn.exec_driver_sql(query).fetchall()
+    data = [i[0] for i in result]
+    response = flask.make_response(data)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+@app.route("/filter/efficiency", methods=["GET"])
+def getEfficiency():
+    with engine.connect() as conn:
+        query = " SELECT efficiency.name FROM efficiency"
+        result = conn.exec_driver_sql(query).fetchall()
+    data = [i[0] for i in result]
+    response = flask.make_response(data)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+@app.route("/filter/chipset", methods=["GET"])
+def getChipset():
+    with engine.connect() as conn:
+        query = " SELECT chipset.name FROM chipset"
+        result = conn.exec_driver_sql(query).fetchall()
+    data = [i[0] for i in result]
+    response = flask.make_response(data)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+@app.route("/filter/storageinterface", methods=["GET"])
+def getStorageinterface():
+    with engine.connect() as conn:
+        query = " SELECT storage_interface.name FROM storage_interface"
+        result = conn.exec_driver_sql(query).fetchall()
+    data = [i[0] for i in result]
+    response = flask.make_response(data)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
+
+
+
+
+
+
+
+
 
 @app.route("/filter/cpu", methods=["POST"])
 def filterCpu():
@@ -865,7 +928,6 @@ def filterMotherboard():
                 AND ddrgen.name IN ({'"{}"'.format('", "'.join(body["ddrgen"]))})
                 AND socket.name IN ({'"{}"'.format('", "'.join(body["socket"]))})
         """
-        print(query)
         result = conn.exec_driver_sql(query).fetchall()
         jsonArr = []
         with app.test_client() as client:
@@ -979,10 +1041,70 @@ def filterCooler():
 @app.route("/compatability", methods=["POST"])
 def checkCompatability():
     body = flask.request.get_json()
-    return "a"
+    print(body)
+    with app.test_client() as client:
+        if body['cpuid'] != 0:
+            cpu = client.get(f"http://localhost:5000/cpu/info?cpuid={body['cpuid']}").json
+        if body['ramid'] != 0:
+            ram = client.get(f"http://localhost:5000/ram/info?ramid={body['ramid']}").json
+        if body['motherboardid'] != 0:
+            motherboard = client.get(f"http://localhost:5000/motherboard/info?motherboardid={body['motherboardid']}").json
+        if body['psuid'] != 0:
+            psu = client.get(f"http://localhost:5000/psu/info?psuid={body['psuid']}").json
+        if body['gpuid'] != 0:
+            gpu = client.get(f"http://localhost:5000/gpu/info?gpuid={body['gpuid']}").json
+        if body['storageid'] != 0:
+            storage = client.get(f"http://localhost:5000/storage/info?storageid={body['storageid']}").json
+        if body['coolerid'] != 0:
+            cooler = client.get(f"http://localhost:5000/cooler/info?coolerid={body['coolerid']}").json
+    conflicts = []
+    with engine.connect() as conn:
+        # CPU RAM
+        if body['cpuid'] != 0 and body['ramid'] != 0:
+            cpuramcompat = False
+            for ddrgen in cpu["ddrgen"]:
+                query = f"SELECT ddrgenid FROM ddrgen WHERE name LIKE '{ddrgen}'"
+                ddrgenid = conn.exec_driver_sql(query).fetchone()[0]
+                if ddrgenid == ram["ddrgenid"]:
+                    cpuramcompat = True
+            if cpuramcompat == False:
+                conflicts.append(["cpu", "ram", "Incompatible cpu and ram ddrgen"])
+                conn.exec_driver_sql(query)
+
+        #Motherboard RAM
+        if body['motherboardid'] != 0 and body['ramid'] != 0:
+            if motherboard["ddrgenid"] != ram["ddrgenid"]:
+                conflicts.append(["motherboard", "ram", "Incompatible motherboard and ram ddrgen"])
+
+        # CPU Motherboard
+        if body['cpuid'] != 0 and body['motherboardid'] != 0:
+            if cpu["socketid"] != motherboard["socketid"]:
+                conflicts.append(["cpu", "motherboard", "Incompatible motherboard and cpu socket"])
+
+        # Motherboard cooler
+        if body['motherboardid'] != 0 and body['coolerid'] != 0:
+            query = f"SELECT socketid FROM cooler_socket WHERE socketid == {motherboard['socketid']}"
+            result = conn.exec_driver_sql(query).fetchone()
+            if result == None:
+                conflicts.append(["motherboard", "cooler", "Incompatible motherboard and cooler socket"])
+
+        # Cooler needed?
+        if body['cpuid'] != 0 and body['coolerid'] != 0:
+            if cpu["hascooler"] == False and body['coolerid'] == 0:
+                conflicts.append(["cpu", "cooler", "CPU does not come with cooler"])
+
+        # motherboard storage
+        if body['storageid'] != 0 and body['motherboardid'] != 0:
+            query = f"SELECT storageinterfaceid FROM motherboard_storage_interface WHERE motherboard_storage_interface.motherboardid = {motherboard['motherboardid']}"
+            storageInterfaces = conn.exec_driver_sql(query).fetchall()
+            if storage["storageinterfaceid"] not in storageInterfaces:
+                conflicts.append(["motherboard", "storage", "Motherboard does not support chosen storage interface"])
+
+    response = flask.make_response(conflicts)
+    response.headers.add("Access-Control-Allow-Origin", "*")
+    return response
 
 
-# @app.route("/build?user")
 
 
 if __name__ == "__main__":
