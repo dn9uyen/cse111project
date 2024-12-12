@@ -56,7 +56,7 @@ const PartTable = (props: any) => {
                 <thead>
                     <tr style={{ borderBottom: '1px solid black' }}>
                         {/* Checkbox column */}
-                        {cols.length > 1 ? (<th style={{ padding: '0px 20px 10px 0px', textAlign: 'left' }}>Select</th>) : <></>}
+                        {cols.length > 1 ? (<th style={{ padding: '0px 20px 10px 0px', textAlign: 'left' }}>Select</th>) : <>No results found</>}
                         {/* Create column names */}
                         {hideId()}
                     </tr>

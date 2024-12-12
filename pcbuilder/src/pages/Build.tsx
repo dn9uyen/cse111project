@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import BuildList from "../components/BuildList";
 import ChoosePart from "../components/ChoosePart";
-import { getCompatability, getPartInfo } from "../api";
+import { addPartInfo, getCompatability, getPartInfo } from "../api";
 
 export default function Build() {
     const [parts, setParts] = useState({
@@ -92,6 +92,13 @@ export default function Build() {
         console.log(conflicts)
     }
 
+    // const [modIn, setModIn] = useState("")
+    // const [modType, setModType] = useState("")
+    // const modPart = () => {
+    //         addPartInfo(modType, JSON.parse(modIn))
+    //     return
+    // }
+
     if (loading) {
         return (
             <h1>
@@ -99,6 +106,8 @@ export default function Build() {
             </h1>
         )
     }
+
+
 
     return (
         <div>
@@ -135,6 +144,9 @@ export default function Build() {
                     }
                     {pageState == "PartList" && <BuildList parts={parts} buildCB={buildCB} />}
                     {pageState == "ChoosePart" && <ChoosePart partType={choosePartType} buildCB={buildCB} setPartCB={setPartCB} />}
+                    {/* Part type:<input onChange={(e) => setModType(e.target.value)}></input> */}
+                    {/* Part info:<input style={{width: '600px'}} onChange={(e) => setModIn(e.target.value)}></input> */}
+                    {/* <button onClick={modPart}>Add part</button> */}
                 </div>
             </div>
         </div>

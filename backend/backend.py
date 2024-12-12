@@ -1034,7 +1034,14 @@ def filterCooler():
             for coolerid in result:
                 jsonArr.append(client.get(f"http://localhost:5000/cooler/info?coolerid={coolerid[0]}").json)
             
-    response = flask.make_response(jsonArr)
+        seen = set()
+        processedJson = []
+
+        for item in jsonArr:
+            if item['coolerid'] not in seen:
+                processedJson.append(item)
+                seen.add(item['coolerid'])
+    response = flask.make_response(processedJson)
     response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
@@ -1087,11 +1094,18 @@ def checkCompatability():
             result = conn.exec_driver_sql(query).fetchone()
             if result == None:
                 conflicts.append(["motherboard", "cooler", "Incompatible motherboard and cooler socket"])
-
-        # Cooler needed?
+        # Cpu cooler
         if body['cpuid'] != 0 and body['coolerid'] != 0:
-            if cpu["hascooler"] == False and body['coolerid'] == 0:
-                conflicts.append(["cpu", "cooler", "CPU does not come with cooler"])
+            query = f"SELECT socketid FROM cooler_socket WHERE socketid == {cpu['socketid']}"
+            result = conn.exec_driver_sql(query).fetchone()
+            if result == None:
+                conflicts.append(["cpu", "cooler", "Incompatible cpu and cooler socket"])
+
+
+        # # Cooler needed?
+        # if body['cpuid'] != 0 and body['coolerid'] != 0:
+        #     if cpu["hascooler"] == False and body['coolerid'] == 0:
+        #         conflicts.append(["cpu", "cooler", "CPU does not come with cooler"])
 
         # motherboard storage
         if body['storageid'] != 0 and body['motherboardid'] != 0:
